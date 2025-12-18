@@ -1,0 +1,11 @@
+node_modules
+node_modules/
+.next/
+.DS_Store
+app/api/server/server-key.json
+.vercel
+.env*.local
+.env.local
+
+.vercel
+.env*.local

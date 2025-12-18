@@ -1,0 +1,91 @@
+import Razorpay from "razorpay";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { amount, currency = "INR", userId, address } = body || {};
+
+    const numericAmount = Number(amount);
+    const amountPaise = Math.round(numericAmount * 100);
+
+    if (!numericAmount || Number.isNaN(numericAmount) || amountPaise <= 0) {
+      return NextResponse.json(
+        { success: false, message: "Valid amount is required" },
+        { status: 400 }
+      );
+    }
+
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return NextResponse.json(
+        { success: false, message: "Razorpay keys are not configured" },
+        { status: 500 }
+      );
+    }
+
+    // #region agent log
+    fetch("http://127.0.0.1:7242/ingest/72c66c78-8d52-4cdc-a1b7-9b0c44f4ba07", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "run1",
+        hypothesisId: "H1",
+        location: "app/api/razorpay/create-order/route.ts:entry",
+        message: "create-order entry",
+        data: { amount, currency, userId, hasKeyId: Boolean(keyId), hasKeySecret: Boolean(keySecret) },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    const razorpay = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    });
+
+    const order = await razorpay.orders.create({
+      amount: amountPaise, // convert to paise
+      currency,
+      receipt: `qr_${Date.now()}_${userId || "guest"}`,
+      notes: {
+        userId: userId || "",
+        addressId: address?.id || "",
+      },
+    });
+
+    // #region agent log
+    fetch("http://127.0.0.1:7242/ingest/72c66c78-8d52-4cdc-a1b7-9b0c44f4ba07", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "debug-session",
+        runId: "run1",
+        hypothesisId: "H2",
+        location: "app/api/razorpay/create-order/route.ts:orderCreated",
+        message: "order created",
+        data: { orderId: order?.id, amount: order?.amount, currency: order?.currency },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    return NextResponse.json({
+      success: true,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      key: keyId,
+    });
+  } catch (error: any) {
+    console.error("Razorpay create-order error:", error);
+    return NextResponse.json(
+      { success: false, message: "Unable to create Razorpay order" },
+      { status: 500 }
+    );
+  }
+}
+
