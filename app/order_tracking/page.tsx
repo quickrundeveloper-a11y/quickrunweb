@@ -706,10 +706,6 @@ const sendOrderToRestaurant = async () => {
           <div className="px-6 pt-6 pb-9 text-center">
             <h1 className="text-2xl font-bold mt-1">Order is confirmed</h1>
 
-          {/*new code notification*/}
-          <button onClick={sendOrderToRestaurant}>
-  sendnotification
-</button>
  
 
             {orderId && <p className="text-gray-500 text-xs mt-1"></p>}
