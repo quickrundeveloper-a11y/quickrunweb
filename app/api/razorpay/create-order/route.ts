@@ -21,6 +21,12 @@ export async function POST(request: Request) {
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
+    // Debug: check env presence in server logs (Vercel / Node)
+    console.log("Razorpay env present?", {
+      hasKeyId: !!keyId,
+      hasKeySecret: !!keySecret,
+    });
+
     if (!keyId || !keySecret) {
       return NextResponse.json(
         { success: false, message: "Razorpay keys are not configured" },
