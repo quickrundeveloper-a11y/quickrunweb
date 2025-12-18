@@ -89,17 +89,23 @@ export async function POST(request: Request) {
       key: keyId,
     });
   } catch (error: any) {
-    console.error("Razorpay create-order error:", {
+    // Log the raw error object first so we can see exactly what is being thrown
+    console.error("Razorpay create-order RAW error:", error);
+
+    console.error("Razorpay create-order error (parsed):", {
       message: error?.message,
       stack: error?.stack,
-      response: error?.response?.data,
+      response: (error as any)?.response?.data,
     });
-  
+
     return NextResponse.json(
       {
         success: false,
         // TEMP: expose more info while debugging, then remove:
-        message: error?.response?.error?.description || error?.message || "Unable to create Razorpay order",
+        message:
+          (error as any)?.response?.error?.description ||
+          error?.message ||
+          "Unable to create Razorpay order",
       },
       { status: 500 }
     );
