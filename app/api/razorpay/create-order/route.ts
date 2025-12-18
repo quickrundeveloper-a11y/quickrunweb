@@ -55,10 +55,14 @@ export async function POST(request: Request) {
       key_secret: keySecret,
     });
 
+    // Razorpay requires receipt length <= 40 characters.
+    const rawReceipt = `qr_${Date.now()}_${userId || "guest"}`;
+    const safeReceipt = rawReceipt.slice(0, 40);
+
     const order = await razorpay.orders.create({
       amount: amountPaise, // convert to paise
       currency,
-      receipt: `qr_${Date.now()}_${userId || "guest"}`,
+      receipt: safeReceipt,
       notes: {
         userId: userId || "",
         addressId: address?.id || "",
