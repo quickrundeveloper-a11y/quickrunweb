@@ -18,13 +18,14 @@ const lexend = Lexend({
 
 import { useState, useEffect } from "react";
 import { openDB } from "idb";
-import { Search, User, ShoppingCart } from "lucide-react";
+import { Search, User, ShoppingCart, Menu } from "lucide-react";
 
 import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot } from "firebase/firestore";
 import { app } from "@/lib/firebase"; 
 import { useRouter } from "next/navigation";
 
 import Cart from "./cart";
+import MenuSheet from "./MenuSheet";
 
 export default function Header() {
   const [openLocation, setOpenLocation] = useState(false);
@@ -62,6 +63,7 @@ const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [openMenu, setOpenMenu] = useState(false);
 
 
 
@@ -422,6 +424,14 @@ useEffect(() => {
               <Search size={20} className="text-gray-600 ml-3" />
             </div>
 
+            {/* Hamburger Menu Button */}
+            <button
+              onClick={() => setOpenMenu(true)}
+              className="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <Menu className="h-5 w-5 text-gray-700" />
+            </button>
+
             <button
               onClick={() => setOpenCart(true)}
               className="bg-blue-400 px-4 py-3 rounded-lg flex items-center gap-2 text-white flex-shrink-0"
@@ -501,8 +511,16 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* RIGHT SIDE — PROFILE */}
-          <div className="flex items-center gap-6">
+          {/* RIGHT SIDE — MENU, CART, PROFILE */}
+          <div className="flex items-center gap-4">
+            {/* Hamburger Menu Button */}
+            <button
+              onClick={() => setOpenMenu(true)}
+              className="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg flex items-center justify-center transition-colors"
+            >
+              <Menu className="h-5 w-5 text-gray-700" />
+            </button>
+
             <div
               onClick={() => setOpenCart(true)}
               className="bg-blue-400 px-3 py-2 rounded-lg flex items-center gap-2 text-white cursor-pointer"
@@ -681,6 +699,9 @@ onClick={async () => {
 
 
 
+
+      {/* MENU SHEET */}
+      <MenuSheet isOpen={openMenu} onClose={() => setOpenMenu(false)} />
 
       {/* CART SIDEBAR */}
       {openCart && (
