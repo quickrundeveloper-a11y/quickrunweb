@@ -28,16 +28,17 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-[9999] transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 z-[99999] transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
       {/* Sheet */}
       <div className={`
-        fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[10000]
+        fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-2xl z-[100000]
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+        min-h-screen
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
@@ -95,7 +96,7 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
         {/* Footer */}
         <div className="p-6 border-t border-gray-100">
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-900">QuickRun</p>
+            <p className="text-lg font-semibold text-gray-500">QuickRun</p>
           </div>
         </div>
       </div>

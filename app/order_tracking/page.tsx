@@ -126,6 +126,8 @@ const DriverOverlayClassRef = useRef<any>(null)
 
   // ⭐ Store name for header (loaded from Restaurent_shop)
   const [storeName, setStoreName] = useState<string | null>(null);
+  const [restaurantNames, setRestaurantNames] = useState<Record<string, string>>({});
+  const [loadingRestaurants, setLoadingRestaurants] = useState(false);
 
   const [userProfile, setUserProfile] = useState<any>(null);  
 const createDriverOverlayClass = () => {
@@ -243,15 +245,69 @@ useEffect(() => {
       const colRef = collection(db, "Customer", userId, "current_order");
       const unsubscribeSnapshot = onSnapshot(
         colRef,
-        (snap) => {
+        async (snap) => {
           if (!snap.empty) {
             const latest = snap.docs[snap.docs.length - 1];
             setOrderId(latest.id);
-            setOrderData(latest.data());
+            const orderData = latest.data();
+            setOrderData(orderData);
+
+            // Fetch restaurant names for all items
+            if (orderData?.items && Array.isArray(orderData.items)) {
+              setLoadingRestaurants(true);
+              
+              const restaurantIds = [...new Set(
+                orderData.items
+                  .filter((item: any) => item.restaurentId)
+                  .map((item: any) => item.restaurentId)
+              )];
+
+              if (restaurantIds.length > 0) {
+                const namePromises = restaurantIds.map(async (restaurantId: string) => {
+                  try {
+                    const restaurantRef = doc(db, "Restaurent_shop", restaurantId);
+                    const restaurantSnap = await getDoc(restaurantRef);
+                    
+                    if (restaurantSnap.exists()) {
+                      const data = restaurantSnap.data();
+                      const name = data?.name || data?.storeName || data?.shopName || `Restaurant ${restaurantId}`;
+                      return { id: restaurantId, name };
+                    }
+                    return { id: restaurantId, name: `Restaurant ${restaurantId}` };
+                  } catch (error) {
+                    console.error(`Error fetching restaurant ${restaurantId}:`, error);
+                    return { id: restaurantId, name: `Restaurant ${restaurantId}` };
+                  }
+                });
+
+                try {
+                  const restaurantData = await Promise.all(namePromises);
+                  const nameMap = restaurantData.reduce((acc, { id, name }) => {
+                    acc[id] = name;
+                    return acc;
+                  }, {} as Record<string, string>);
+
+                  setRestaurantNames(nameMap);
+                  
+                  // Set the first restaurant name as the main store name for the header
+                  if (restaurantData.length > 0) {
+                    setStoreName(restaurantData[0].name);
+                  }
+                } catch (error) {
+                  console.error("Error fetching restaurant names:", error);
+                } finally {
+                  setLoadingRestaurants(false);
+                }
+              } else {
+                setLoadingRestaurants(false);
+              }
+            }
 
           } else {
             setOrderId(null);
             setOrderData(null);
+            setRestaurantNames({});
+            setStoreName(null);
           }
         },
         (err) => {
@@ -362,17 +418,7 @@ if (!storeMarkerRef.current) {
                 const loc = data?.location;
                 if (!loc?.lat || !loc?.lng) return;
 
-                // ⭐ Capture store name once for header
-                if (!storeName) {
-                  const nameFromDoc =
-                    (data?.name as string | undefined) ||
-                    (data?.storeName as string | undefined) ||
-                    (data?.shopName as string | undefined) ||
-                    null;
-                  if (nameFromDoc) {
-                    setStoreName(nameFromDoc);
-                  }
-                }
+                // Store name is now handled in the main useEffect
 
                 const originalLat = Number(loc.lat);
                 const originalLng = Number(loc.lng);
@@ -864,7 +910,7 @@ const sendOrderToRestaurant = async () => {
 
           <div className="bg-white rounded-2xl shadow p-6">
             <p className="font-semibold text-lg">
-              {storeName || "Super Store UP-NCR Noida Sector 63A"}
+              {loadingRestaurants ? "Loading restaurant..." : (storeName || "Super Store UP-NCR Noida Sector 63A")}
             </p>
             <p className="text-gray-500 text-sm">
               Packing{" "}
@@ -873,6 +919,9 @@ const sendOrderToRestaurant = async () => {
                     orderData.items.length > 1 ? "s" : ""
                   }`
                 : "items"}
+              {Object.keys(restaurantNames).length > 1 && (
+                <span className="ml-1">from {Object.keys(restaurantNames).length} restaurants</span>
+              )}
             </p>
 
             {orderData?.items ? (
@@ -895,8 +944,10 @@ const sendOrderToRestaurant = async () => {
                       <p className="text-xs text-gray-500 line-through">
                         MRP ₹{item.mrp}
                       </p>
-                      {item.restaurentId && (
-                        <p className="text-xs text-gray-600 mt-1"></p>
+                      {item.restaurentId && restaurantNames[item.restaurentId] && (
+                        <p className="text-xs text-gray-600 mt-1">
+                          From: {restaurantNames[item.restaurentId]}
+                        </p>
                       )}
                     </div>
                   </div>
