@@ -44,25 +44,31 @@ const [visibleProducts, setVisibleProducts] = useState<any[]>([]);
 const [page, setPage] = useState(1);
 const ITEMS_PER_PAGE = 12;
 
-const lastRef = useRef<HTMLElement | null>(null);
+const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
 
 
 const loadMore = () => {
-  const nextPage = page + 1;
-  const start = (nextPage - 1) * ITEMS_PER_PAGE;
-  const end = start + ITEMS_PER_PAGE;
+  setPage((prevPage) => {
+    const nextPage = prevPage + 1;
+    const start = (nextPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
 
-  const nextItems = products.slice(start, end);
+    const nextItems = products.slice(start, end);
 
-  if (nextItems.length > 0) {
-    setVisibleProducts((prev) => [...prev, ...nextItems]);
-    setPage(nextPage);
-  }
+    if (nextItems.length > 0) {
+      setVisibleProducts((prev) => [...prev, ...nextItems]);
+      return nextPage;
+    }
+
+    return prevPage;
+  });
 };
 
 
+
 useEffect(() => {
-  if (!lastRef.current) return;
+  if (!loadMoreRef.current) return;
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -70,13 +76,19 @@ useEffect(() => {
         loadMore();
       }
     },
-    { threshold: 1 }
+    {
+      root: null,
+      rootMargin: "200px",
+      threshold: 0,
+    }
   );
 
-  observer.observe(lastRef.current);
+  observer.observe(loadMoreRef.current);
 
   return () => observer.disconnect();
-}, [page, products.length]);
+}, [products.length, page]);
+
+
 
 
 
@@ -448,7 +460,7 @@ const tokens = tokenNorm(categoryName)
             const { blocked, overlayText, isOutOfRange, isOutOfStock, shopClosed } =
               getCardState(item);
             const qty = quantities[item.id] || 0;
-            const shouldAttachRef = index === sortedVisibleProducts.length - 1;
+            
             const slug = generateSlug(item.title, item.id);
 
             const card = (
@@ -460,11 +472,7 @@ const tokens = tokenNorm(categoryName)
                 isOutOfRange={isOutOfRange}
                 isOutOfStock={isOutOfStock}
                 qty={qty}
-                attachRef={
-                  shouldAttachRef
-                    ? (el: any) => (lastRef.current = el)
-                    : undefined
-                }
+                
                 onIncrement={(e: any) => changeQuantity(item, 1, e)}
                 onDecrement={(e: any) => changeQuantity(item, -1, e)}
               />
@@ -486,6 +494,7 @@ const tokens = tokenNorm(categoryName)
             );
           })}
         </div>
+        <div ref={loadMoreRef} className="h-10 w-full" />
 
         {snack && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg z-50">
