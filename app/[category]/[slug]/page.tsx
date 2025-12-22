@@ -51,9 +51,43 @@ export async function generateMetadata({ params }: any) {
   console.log("🎉 FINAL DATA:", data);
 
   return {
-    title: data.name || "Product",
-    description: data.keyInformation?.description || data.description || "",
-    keywords: data.keywords || "",
+    title: `${data.name || "Product"} - Quick Run Fast | Fresh Grocery Delivery`,
+    description: data.keyInformation?.description || data.description || `Buy fresh ${data.name} online from Quick Run Fast. Premium quality grocery products with same-day delivery. Order now!`,
+    keywords: data.keywords || `${data.name}, grocery, fresh, delivery, Quick Run Fast, ${category}`,
+    
+    // Open Graph tags for social media
+    openGraph: {
+      title: `${data.name || "Product"} - Quick Run Fast`,
+      description: data.keyInformation?.description || data.description || `Fresh ${data.name} delivered to your doorstep`,
+      images: data.imageUrls ? [
+        {
+          url: data.imageUrls[0],
+          width: 800,
+          height: 600,
+          alt: data.name || "Product Image"
+        }
+      ] : [],
+      type: 'website',
+      siteName: 'Quick Run Fast'
+    },
+    
+    // Twitter Card tags
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.name || "Product"} - Quick Run Fast`,
+      description: data.keyInformation?.description || data.description || `Fresh ${data.name} delivered to your doorstep`,
+      images: data.imageUrls ? [data.imageUrls[0]] : []
+    },
+    
+    // Additional meta tags for rich snippets
+    other: {
+      'product:price:amount': data.priceTiers?.[0]?.price?.toString() || '0',
+      'product:price:currency': 'INR',
+      'product:availability': data.inStock !== false ? 'in stock' : 'out of stock',
+      'product:condition': 'new',
+      'product:brand': 'Quick Run Fast',
+      'product:category': category || 'grocery'
+    }
   };
 }
 

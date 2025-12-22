@@ -8,20 +8,29 @@ export default async function sitemap() {
 
   try {
     /** ------------------------
-     * 1️⃣ Fetch All Categories
+     * 1️⃣ Categories (FIXED – NO undefined)
      * ------------------------ */
     const catSnap = await getDocs(collection(db, "categories"));
+
     const categories = catSnap.docs.map((doc) => {
       const data = doc.data();
+
+      const slug =
+        data.slug ||
+        String(data.name)
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-");
+
       return {
-        url: `${baseUrl}/category?name=${encodeURIComponent(data.name)}`,
+        url: `${baseUrl}/category/${slug}`,
         lastModified: new Date(),
       };
     });
 
     /** ------------------------
-     * 2️⃣ Fetch All Products using the SAME helper as the UI
-     *     This guarantees sitemap coverage matches what users see.
+     * 2️⃣ Products (UNCHANGED – CORRECT)
      * ------------------------ */
     const allProducts = await getAllProducts();
 
@@ -29,7 +38,6 @@ export default async function sitemap() {
       .map((p: any) => {
         const raw = p.raw || {};
 
-        // Prefer a persisted slug if present on the raw Firestore doc
         const persistedSlug: string | undefined = raw.slug;
         const nameSource =
           p.title ||
@@ -40,6 +48,7 @@ export default async function sitemap() {
         if (!nameSource && !persistedSlug) return null;
 
         const type = (p.type || raw.type || "grocery").toLowerCase();
+
         const slug =
           persistedSlug || generateSlug(String(nameSource), String(p.id));
 
@@ -48,8 +57,11 @@ export default async function sitemap() {
           raw.modifiedAt ||
           raw.lastUpdated ||
           raw.createdAt;
+
         const lastModified =
-          ts && typeof ts.toDate === "function" ? ts.toDate() : new Date();
+          ts && typeof ts.toDate === "function"
+            ? ts.toDate()
+            : new Date();
 
         return {
           url: `${baseUrl}/${type}/${slug}`,
@@ -63,6 +75,7 @@ export default async function sitemap() {
      * ------------------------ */
     const staticUrls = [
       "",
+      "/home",
       "/termsandcondition",
       "/shipping_policy",
       "/privacy",
@@ -73,7 +86,7 @@ export default async function sitemap() {
     }));
 
     /** ------------------------
-     * 4️⃣ Return Final Sitemap
+     * 4️⃣ Final Sitemap
      * ------------------------ */
     return [...staticUrls, ...categories, ...products];
 
@@ -82,3 +95,6 @@ export default async function sitemap() {
     return [];
   }
 }
+
+
+

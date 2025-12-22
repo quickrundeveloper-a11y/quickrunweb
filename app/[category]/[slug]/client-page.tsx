@@ -1,6 +1,5 @@
 "use client";
 
-import Script from "next/script";
 import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { db } from "@/lib/firebase";
@@ -17,6 +16,11 @@ import React from "react";
 
 import { useLocationData } from "@/app/LocationProvider";
 import { haversineDistanceKm } from "@/app/utils/distance";
+
+// Import our new schema components
+import ProductSchema from "@/app/components/ProductSchema";
+import SEOEnhancer from "@/app/components/SEOEnhancer";
+import SchemaValidator from "@/app/components/SchemaValidator";
 
 export default function ProductPage() {
   const params = useParams();
@@ -37,6 +41,10 @@ export default function ProductPage() {
 
   const [openInfo, setOpenInfo] = useState(false);
   const [openKey, setOpenKey] = useState(false);
+
+  // ⭐ SELLER INFO
+  const [sellerName, setSellerName] = useState<string>("");
+  const [sellerLoading, setSellerLoading] = useState<boolean>(false);
 
   // ⭐ USER LOCATION for range checking
   const { coords, hasLocation } = useLocationData();
@@ -92,8 +100,12 @@ export default function ProductPage() {
       setShopExists(false);
       setShopHasLocation(false);
       setDeliverable(false);
+      setSellerName("Quick Run Fast"); // Default seller name
+      setSellerLoading(false);
       return;
     }
+
+    setSellerLoading(true); // Start loading seller info
 
     (async function checkShop() {
       try {
@@ -105,6 +117,8 @@ export default function ProductPage() {
           setShopHasLocation(false);
           setShopClosed(false);
           setDeliverable(false);
+          setSellerName("Quick Run Fast"); // Default when shop not found
+          setSellerLoading(false);
           return;
         }
 
@@ -114,6 +128,10 @@ export default function ProductPage() {
         setShopExists(true);
         setShopHasLocation(hasLoc);
         setShopClosed(shopData.activeShop === false);
+        
+        // ⭐ SET SELLER NAME from shop data
+        setSellerName(shopData.name || shopData.shopName || "Quick Run Fast");
+        setSellerLoading(false); // Stop loading
 
         if (
           hasLocation &&
@@ -137,6 +155,8 @@ export default function ProductPage() {
         setShopExists(null);
         setShopHasLocation(null);
         setDeliverable(false);
+        setSellerName("Quick Run Fast"); // Default on error
+        setSellerLoading(false);
       }
     })();
   }, [product?.restaurentId, hasLocation, userLat, userLng]);
@@ -192,6 +212,9 @@ export default function ProductPage() {
     setZoomPos({ x, y });
   }
 
+  // Generate full product URL for schema
+  const productUrl = `https://www.quickrunfast.com/${category}/${slug}`;
+
   const tier = product.priceTiers?.[selectedTierIndex] ?? {};
   const price = tier.price ?? 0;
   const mrp = tier.mrp ?? null;
@@ -201,58 +224,24 @@ export default function ProductPage() {
 
   return (
     <>
-
-    <Script
-  id="product-schema"
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Product",
-
-      name: product.name,
-      image: product.imageUrls, // array already perfect
-      description: product.keyInformation?.description || product.name,
-      sku: product.sku || product.id, // fallback
-
-      brand: {
-        "@type": "Brand",
-        name: "QuickRun"
-      },
-
-      category: product.category, // e.g. vegetables
-
-      keywords: product.keywords || "",
-
-      additionalProperty: [
-        { "@type": "PropertyValue", name: "Veg Type", value: product.groceryVegType },
-        { "@type": "PropertyValue", name: "Edible Type", value: product.groceryEdible },
-        { "@type": "PropertyValue", name: "Concern", value: product.keyInformation?.concern },
-        { "@type": "PropertyValue", name: "Ingredients", value: product.keyIngredients },
-      ],
-
-      offers: {
-        "@type": "Offer",
-        url: `https://www.quickrunfast.com/product/${product.id}`,
-        priceCurrency: "INR",
-
-        price: product?.priceTiers?.[0]?.price || product.mrp,
-        mrp: product?.priceTiers?.[0]?.mrp || product.mrp,
-
-        availability: product.inStock
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
-
-        itemCondition: "https://schema.org/NewCondition",
-
-        seller: {
-          "@type": "Organization",
-          name: "QuickRun"
-        }
-      }
-    })
-  }}
-/>
+      {/* SEO Schema Components */}
+      {product && (
+        <>
+          <ProductSchema 
+            productData={product}
+            productId={id}
+          />
+          <SEOEnhancer 
+            productData={product}
+            productId={id}
+            category={category}
+          />
+          <SchemaValidator 
+            productData={product}
+            productId={id}
+          />
+        </>
+      )}
 
     <div className="min-h-screen pb-20 px-4 md:px-20">
 
@@ -470,7 +459,7 @@ export default function ProductPage() {
 
             {openInfo && (
               <div className="p-4 space-y-3 text-gray-700">
-                <div><b>Seller:</b> {product.info?.seller}</div>
+                <div><b>Seller:</b> {sellerLoading ? "Loading..." : (sellerName || "Quick Run Fast")}</div>
                 <div><b>Return Policy:</b> {product.info?.returnPolicy}</div>
                 <div><b>Customer Care:</b> {product.info?.customerCare}</div>
                 <div><b>Shelf Life:</b> {product.info?.shelfLife}</div>
