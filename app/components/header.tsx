@@ -68,7 +68,7 @@ const pathname = usePathname();
 
 
   useEffect(() => {
-  if (pathname === "/home") {
+  if (pathname === "/") {
     setSearchQuery("");
 
     // SearchPage ka liveQuery bhi reset hoga
@@ -266,7 +266,7 @@ useEffect(() => {
 
           {/* LEFT — LOGO + LOCATION */}
           <div className="flex items-center gap-4 flex-shrink-0">
-<Link href="/home" className="relative z-[9999] inline-block" >
+<Link href="/" className="relative z-[9999] inline-block" >
   <Image
     src="/logo.png"
     alt="logo"
@@ -448,7 +448,7 @@ useEffect(() => {
 
           {/* LEFT SIDE — LOGO + LOCATION */}
           <div className="flex items-center gap-6">
-           <Link href="/home" className="relative z-[9999] inline-block" >
+           <Link href="/" className="relative z-[9999] inline-block" >
   <Image
     src="/logo.png"
     alt="logo"

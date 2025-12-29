@@ -109,7 +109,7 @@ export default function DeliveryPage() {
         {/* BACK BUTTON */}
         <div className="mt-12 flex justify-center">
           <a
-            href="/home"
+            href="/"
             className="
               bg-[#00b85c] text-white px-6 py-3 rounded-full text-lg font-semibold
               shadow-md hover:bg-[#009a4e] transition-all

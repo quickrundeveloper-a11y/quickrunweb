@@ -22,7 +22,7 @@ export default function PaymentSuccessInner() {
 
         if (!orderId) {
           alert("Invalid callback");
-          router.push("/home");
+          router.push("/");
           return;
         }
 
@@ -36,7 +36,7 @@ export default function PaymentSuccessInner() {
           verifyJson = await verifyRes.json();
         } catch {
           alert("Payment verification failed! Please try again.");
-          router.push("/home");
+          router.push("/");
           return;
         }
 
@@ -44,7 +44,7 @@ export default function PaymentSuccessInner() {
 
         if (!verifyJson || !verifyJson.paid) {
           alert("Payment failed! Please try again.");
-          router.push("/home");
+          router.push("/");
           return;
         }
 
@@ -69,7 +69,7 @@ export default function PaymentSuccessInner() {
 
         if (items.length === 0) {
           alert("Cart empty");
-          router.push("/home");
+          router.push("/");
           return;
         }
 
@@ -103,7 +103,7 @@ export default function PaymentSuccessInner() {
       } catch (error) {
         console.error("Sandbox error:", error);
         alert("Something went wrong! Please try again.");
-        router.push("/home");
+        router.push("/");
       }
     }
 

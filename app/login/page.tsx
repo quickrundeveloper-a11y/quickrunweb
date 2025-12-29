@@ -96,7 +96,7 @@ export default function LoginPage() {
         localStorage.setItem("currentUser", data.customerId);
         await saveLoginToDB(data.customerId, "+91" + phone);
         setSnack("Login successful!");
-        router.push("/home");
+        router.push("/");
       } else {
         setSnack(data.message || "Invalid OTP");
       }
@@ -132,7 +132,7 @@ export default function LoginPage() {
       if (data.success) {
         localStorage.setItem("currentUser", docId);
         await saveLoginToDB(docId, "+91" + phone);
-        router.push("/home");
+        router.push("/");
       } else {
         setSnack(data.message || "Name update failed");
       }

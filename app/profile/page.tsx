@@ -97,8 +97,8 @@ const showSnack = (msg: string) => {
       await idb.clear("user");
 
       // 3. Redirect (Simulating the end of session)
-      router.push("/home");
-      setTimeout(() => (window.location.href = "/home"), 300);
+      router.push("/");
+      setTimeout(() => (window.location.href = "/"), 300);
     } catch (error) {
       console.error("Logout error:", error);
     }

@@ -75,7 +75,7 @@ export default async function sitemap() {
      * ------------------------ */
     const staticUrls = [
       "",
-      "/home",
+      "/",
       "/termsandcondition",
       "/shipping_policy",
       "/privacy",
