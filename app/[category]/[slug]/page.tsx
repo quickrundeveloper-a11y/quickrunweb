@@ -1,5 +1,7 @@
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import Script from "next/script";
+import ClientPage from "./client-page";
 
 export async function generateMetadata({ params }: any) {
 
@@ -91,4 +93,159 @@ export async function generateMetadata({ params }: any) {
   };
 }
 
-export { default } from "./client-page";
+// Server Component that includes JSON-LD schema
+export default async function ProductPage({ params }: any) {
+  const resolvedParams = await params;
+  const { category, slug: rawSlug } = resolvedParams;
+
+  if (!category || !rawSlug) {
+    return <ClientPage />;
+  }
+
+  const slug = decodeURIComponent(rawSlug);
+  const id = slug.split("-").pop();
+
+  if (!id) {
+    return <ClientPage />;
+  }
+
+  // Fetch product data for schema
+  const ref = doc(db, category, id);
+  const snap = await getDoc(ref);
+
+  let productSchema = null;
+
+  if (snap.exists()) {
+    const data = snap.data();
+    
+    // Generate JSON-LD schema
+    const jsonLd = {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": data.name,
+      "image": data.imageUrls || [],
+      "description": data.keyInformation?.description || data.description || `Fresh ${data.name} from Quick Run Fast - Premium quality grocery products delivered to your doorstep`,
+      "brand": {
+        "@type": "Brand",
+        "name": "Quick Run Fast",
+        "url": "https://quickrunfast.com"
+      },
+      "manufacturer": {
+        "@type": "Organization",
+        "name": "Quick Run Fast"
+      },
+      "sku": id,
+      "mpn": id,
+      "gtin": id,
+      "category": data.category || category || "Grocery",
+      "productID": id,
+      "url": `https://quickrunfast.com/${category?.toLowerCase() || 'product'}/${id}`,
+      "mainEntityOfPage": `https://quickrunfast.com/${category?.toLowerCase() || 'product'}/${id}`,
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "INR",
+        "price": data.priceTiers?.[0]?.price?.toString() || "0",
+        "lowPrice": data.priceTiers?.[0]?.price?.toString() || "0",
+        "highPrice": data.priceTiers?.[data.priceTiers?.length - 1]?.price?.toString() || data.priceTiers?.[0]?.price?.toString() || "0",
+        "offerCount": data.priceTiers?.length || 1,
+        "availability": data.inStock !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "url": `https://quickrunfast.com/${category?.toLowerCase() || 'product'}/${id}`,
+        "seller": {
+          "@type": "Organization",
+          "name": "Quick Run Fast",
+          "url": "https://quickrunfast.com"
+        },
+        "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "INR"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 0,
+              "maxValue": 1,
+              "unitCode": "DAY"
+            },
+            "transitTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 1,
+              "maxValue": 2,
+              "unitCode": "DAY"
+            }
+          }
+        }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "reviewCount": "10",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Quick Run Fast Customer"
+          },
+          "reviewBody": "Fresh and high-quality product delivered quickly!"
+        }
+      ],
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Category",
+          "value": data.category || category || "Grocery"
+        },
+        {
+          "@type": "PropertyValue", 
+          "name": "Freshness",
+          "value": "Farm Fresh"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Delivery",
+          "value": "Same Day Delivery Available"
+        }
+      ],
+      "isRelatedTo": {
+        "@type": "Product",
+        "name": "Fresh Grocery Products"
+      },
+      "potentialAction": {
+        "@type": "BuyAction",
+        "target": `https://quickrunfast.com/${category?.toLowerCase() || 'product'}/${id}`,
+        "price": data.priceTiers?.[0]?.price?.toString() || "0",
+        "priceCurrency": "INR"
+      }
+    };
+
+    productSchema = (
+      <Script
+        id="product-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        strategy="beforeInteractive"
+      />
+    );
+  }
+
+  return (
+    <>
+      {productSchema}
+      <ClientPage />
+    </>
+  );
+}

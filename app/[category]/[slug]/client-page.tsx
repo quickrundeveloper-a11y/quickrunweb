@@ -17,11 +17,6 @@ import React from "react";
 import { useLocationData } from "@/app/LocationProvider";
 import { haversineDistanceKm } from "@/app/utils/distance";
 
-// Import our new schema components
-import ProductSchema from "@/app/components/ProductSchema";
-import SEOEnhancer from "@/app/components/SEOEnhancer";
-import SchemaValidator from "@/app/components/SchemaValidator";
-
 export default function ProductPage() {
   const params = useParams();
 
@@ -224,25 +219,6 @@ export default function ProductPage() {
 
   return (
     <>
-      {/* SEO Schema Components */}
-      {product && (
-        <>
-          <ProductSchema 
-            productData={product}
-            productId={id}
-          />
-          <SEOEnhancer 
-            productData={product}
-            productId={id}
-            category={category}
-          />
-          <SchemaValidator 
-            productData={product}
-            productId={id}
-          />
-        </>
-      )}
-
     <div className="min-h-screen pb-20 px-4 md:px-20">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-30 mt-10">
