@@ -191,7 +191,7 @@ export default function ProductPage() {
   const interactionBlocked = Boolean(overlayMessage);
 
   if (!product)
-    return <div className="p-10 text-xl">Loading...</div>;
+    return <div className="p-10 text-xl text-gray-900 dark:text-gray-100">Loading...</div>;
 
 
   function handleZoom(e: React.MouseEvent<HTMLDivElement>) {
@@ -219,7 +219,7 @@ export default function ProductPage() {
 
   return (
     <>
-    <div className="min-h-screen pb-20 px-4 md:px-20">
+    <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground pb-20 px-4 md:px-20">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-30 mt-10">
 
@@ -230,7 +230,7 @@ export default function ProductPage() {
     onMouseMove={handleZoom}
     onMouseEnter={() => setZoomActive(true)}
     onMouseLeave={() => setZoomActive(false)}
-    className="w-full aspect-square rounded-xl bg-gray-100 overflow-hidden relative"
+    className="w-full aspect-square rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden relative"
     style={{ cursor: "zoom-in" }}
   >
     <img src={mainImage || ""} className="w-full h-full object-contain" />
@@ -239,7 +239,7 @@ export default function ProductPage() {
 
   {zoomActive && (
     <div
-      className="hidden md:block absolute right-5 top-20 w-[600px] h-[600px] rounded-xl z-50 bg-white"
+      className="hidden md:block absolute right-5 top-20 w-[600px] h-[600px] rounded-xl z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
       style={{
         backgroundImage: `url(${mainImage})`,
         backgroundRepeat: "no-repeat",
@@ -258,7 +258,7 @@ export default function ProductPage() {
                 src={img}
                 className={
                   "w-20 h-20 rounded-lg cursor-pointer border " +
-                  (mainImage === img ? "border-green-600 shadow" : "border-gray-300")
+                  (mainImage === img ? "border-green-600 shadow" : "border-gray-300 dark:border-gray-600")
                 }
               />
             ))}
@@ -268,10 +268,10 @@ export default function ProductPage() {
         {/* RIGHT DETAILS */}
         <div>
           {interactionBlocked && (
-            <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-700 px-4 py-3">
+            <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 px-4 py-3">
               {overlayMessage === "Shop Closed" ? (
                 <span className="inline-flex items-center gap-2">
-                  <img src="/img/store.png" alt="Shop Closed" className="w-6 h-6 object-contain" />
+                  <img src="/img/store.png" alt="Shop Closed" className="w-6 h-6 object-contain dark:invert" />
                   Shop Closed
                 </span>
               ) : (
@@ -279,12 +279,12 @@ export default function ProductPage() {
               )}
             </div>
           )}
-          <h1 className="text-3xl md:text-4xl font-bold mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100">
             {product.name || product.keyInformation?.name || "Product"}
           </h1>
 
           <div className="relative mb-3">
-            <h2 className="text-4xl font-bold text-black">₹{price}</h2>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">₹{price}</h2>
             {discount && (
               <span className="absolute right-0 top-0 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
                 {discount.toFixed(0)}% OFF
@@ -292,45 +292,45 @@ export default function ProductPage() {
             )}
           </div>
 
-          {mrp && <p className="text-gray-400 line-through text-sm">MRP ₹{mrp}</p>}
+          {mrp && <p className="text-gray-400 dark:text-gray-500 line-through text-sm">MRP ₹{mrp}</p>}
 
           {/* Tiers */}
-          <h3 className="text-gray-500 my-3">Select Unit</h3>
+          <h3 className="text-gray-500 dark:text-gray-400 my-3">Select Unit</h3>
 
           <div className="flex gap-4">
             {product.priceTiers?.map((pt: any, i: number) => (
               <div
                 key={i}
                 onClick={() => setSelectedTierIndex(i)}
-                className={`p-4 rounded-2xl w-40 cursor-pointer bg-[#eafdeb] border-2 ${
-                  selectedTierIndex === i ? "border-green-600 shadow-lg" : "border-gray-300"
+                className={`p-4 rounded-2xl w-40 cursor-pointer bg-green-50 dark:bg-green-900/20 border-2 ${
+                  selectedTierIndex === i ? "border-green-600 shadow-lg" : "border-gray-300 dark:border-gray-600"
                 }`}
               >
-                <p className="font-semibold text-lg">
+                <p className="font-semibold text-lg text-gray-900 dark:text-gray-100">
                   {pt.quantity ? `${pt.quantity} ${pt.unit}` : pt.unit}
                 </p>
-                <p className="text-xl font-bold">₹{pt.price}</p>
-                <p className="line-through text-gray-400 text-sm">MRP ₹{pt.mrp}</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">₹{pt.price}</p>
+                <p className="line-through text-gray-400 dark:text-gray-500 text-sm">MRP ₹{pt.mrp}</p>
               </div>
             ))}
           </div>
 
           {/* ICONS */}
-          <div className="grid grid-cols-3 mt-6 bg-gray-100 rounded-xl p-4 text-center">
+          <div className="grid grid-cols-3 mt-6 bg-gray-100 dark:bg-gray-800 rounded-xl p-4 text-center">
             <div>
               <div className="text-2xl mb-1">↩️</div>
-              <p className="font-bold">No returns</p>
-              <p className="text-xs text-gray-500">Check details</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">No returns</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Check details</p>
             </div>
             <div>
               <div className="text-2xl mb-1">🚚</div>
-              <p className="font-bold">Fast</p>
-              <p className="text-xs text-gray-500">Delivery</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">Fast</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Delivery</p>
             </div>
             <div>
               <div className="text-2xl mb-1">🎧</div>
-              <p className="font-bold">24/7</p>
-              <p className="text-xs text-gray-500">Support</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">24/7</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Support</p>
             </div>
           </div>
 
@@ -424,17 +424,17 @@ export default function ProductPage() {
           </div>
 
           {/* INFO */}
-          <div className="mt-4 bg-gray-100 rounded-xl">
+          <div className="mt-4 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setOpenInfo(!openInfo)}
-              className="w-full p-4 text-left font-semibold flex justify-between"
+              className="w-full p-4 text-left font-semibold flex justify-between text-gray-900 dark:text-gray-100"
             >
               Info
               <span>{openInfo ? "▲" : "▼"}</span>
             </button>
 
             {openInfo && (
-              <div className="p-4 space-y-3 text-gray-700">
+              <div className="p-4 space-y-3 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700">
                 <div><b>Seller:</b> {sellerLoading ? "Loading..." : (sellerName || "Quick Run Fast")}</div>
                 <div><b>Return Policy:</b> {product.info?.returnPolicy}</div>
                 <div><b>Customer Care:</b> {product.info?.customerCare}</div>
@@ -444,17 +444,17 @@ export default function ProductPage() {
           </div>
 
           {/* KEY INFORMATION */}
-          <div className="mt-4 bg-gray-100 rounded-xl">
+          <div className="mt-4 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setOpenKey(!openKey)}
-              className="w-full p-4 text-left font-semibold flex justify-between"
+              className="w-full p-4 text-left font-semibold flex justify-between text-gray-900 dark:text-gray-100"
             >
               Key Information
               <span>{openKey ? "▲" : "▼"}</span>
             </button>
 
             {openKey && (
-              <div className="p-4 space-y-3 text-gray-700">
+              <div className="p-4 space-y-3 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700">
                 <div><b>Description:</b> {product.keyInformation?.description}</div>
                 <div><b>Ingredients:</b> {product.keyInformation?.ingredients}</div>
                 <div><b>Concern:</b> {product.keyInformation?.concern}</div>

@@ -500,7 +500,7 @@ if (paymentMethod === "COD") {
     // 17. Render logged-out state if not loading and userId is missing
     if (!userId) {
         return (
-            <div className="fixed inset-0 bg-white z-[9999] flex items-center justify-center">
+            <div className="fixed inset-0 bg-white z-[100005] flex items-center justify-center">
                 <p className="text-red-500 font-semibold">
                     You must be logged in to access your cart.
                 </p>
@@ -511,17 +511,17 @@ if (paymentMethod === "COD") {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-[9998]"></div>
-      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-gray-100 p-4 z-[9999] overflow-y-auto shadow-2xl border-l border-gray-200">
-        <div className="w-full relative z-[10000]">
+      <div className="fixed inset-0 bg-black/40 z-[100000]"></div>
+      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-gray-100 dark:bg-gray-800 p-4 z-[100001] overflow-y-auto shadow-2xl border-l border-gray-200 dark:border-gray-700">
+        <div className="w-full relative z-[100002]">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Checkout</h1>
             <button
               onClick={() => {
                 if (onClose) return onClose();
                 router.back();
               }}
-              className="h-8 w-8 flex items-center justify-center rounded-full bg-white shadow hover:bg-gray-100"
+              className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               ✕
             </button>
@@ -538,16 +538,16 @@ if (paymentMethod === "COD") {
             {/* LEFT COLUMN: Cart Details */}
             <div className="flex-1 space-y-4">
               {/* Cart Items */}
-              <div className="rounded-xl bg-white p-4 shadow-sm">
+              <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                 {cartItems.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">Your cart is empty</div>
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">Your cart is empty</div>
                 ) : (
                   cartItems.map((item) => (
                     <div
                       key={item.id}
                       className="mb-6 flex items-start gap-4 last:mb-0"
                     >
-                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-100">
+                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-100 dark:border-gray-600">
                         <img
                           src={item.image}
                           alt={item.name}
@@ -556,15 +556,15 @@ if (paymentMethod === "COD") {
                       </div>
 
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 line-clamp-2">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
                           {item.name}
                         </h4>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {item.quantityPerUnit
                             ? `${item.quantityPerUnit} ${item.unit}`
                             : item.unit}
                         </p>
-                        <div className="mt-1 font-semibold text-gray-900">
+                        <div className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
                           ₹{item.price}
                         </div>
                       </div>
@@ -599,9 +599,9 @@ if (paymentMethod === "COD") {
               </div>
 
               {/* Bill Details */}
-              <div className="rounded-xl bg-white p-4 shadow-sm">
-                <h3 className="mb-3 font-bold text-gray-900">Bill Details</h3>
-                <div className="space-y-2 text-sm text-gray-600">
+              <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h3 className="mb-3 font-bold text-gray-900 dark:text-gray-100">Bill Details</h3>
+                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div className="flex justify-between">
                     <span>Item Total</span>
                     <span>₹{itemTotal}</span>
@@ -614,7 +614,7 @@ if (paymentMethod === "COD") {
                     <span>Handling Charge</span>
                     <span className="text-green-600">FREE</span>
                   </div>
-                  <div className="border-t pt-2 flex justify-between text-base font-bold text-gray-900">
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between text-base font-bold text-gray-900 dark:text-gray-100">
                     <span>Grand Total</span>
                     <span>₹{grandTotal}</span>
                   </div>
@@ -622,11 +622,11 @@ if (paymentMethod === "COD") {
               </div>
 
               {/* Cancellation Policy */}
-              <div className="rounded-xl bg-white p-4 shadow-sm">
-                <h4 className="font-semibold text-sm mb-1">
+              <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h4 className="font-semibold text-sm mb-1 text-gray-900 dark:text-gray-100">
                   Cancellation Policy
                 </h4>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Orders cannot be cancelled once packed for delivery. In case of
                   unexpected delays, a refund will be provided, if applicable.
                 </p>
@@ -637,8 +637,8 @@ if (paymentMethod === "COD") {
             <div className="w-full space-y-4">
               {/* Address Selection */}
               {showAddressList && (
-                <div className="rounded-xl bg-white p-4 shadow-sm space-y-3 max-h-[70vh] overflow-y-auto">
-                  <h3 className="font-bold text-gray-900 mb-2">
+                <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-200 dark:border-gray-700 space-y-3 max-h-[70vh] overflow-y-auto">
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">
                     Your saved address
                   </h3>
 
@@ -651,19 +651,19 @@ if (paymentMethod === "COD") {
                       }}
                       className={`cursor-pointer rounded-xl border p-4 ${
                         selectedAddress?.id === addr.id
-                          ? "border-green-600 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? "border-green-600 bg-green-50 dark:bg-green-900/20"
+                          : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-                          <MapPin className="h-5 w-5 text-gray-600" />
+                        <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                          <MapPin className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-bold text-gray-900">
+                          <h4 className="font-bold text-gray-900 dark:text-gray-100">
                             {addr.type}
                           </h4>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {addr.address}, {addr.building}, {addr.landmark}
                           </p>
                         </div>
@@ -674,21 +674,21 @@ if (paymentMethod === "COD") {
                  {addresses.length === 0 && (
   <div
     onClick={() => setOpenAddAddress(true)}
-    className="cursor-pointer rounded-xl border border-green-600 bg-green-50 p-4 flex items-center justify-between shadow-sm active:scale-[0.98] transition"
+    className="cursor-pointer rounded-xl border border-green-600 bg-green-50 dark:bg-green-900/20 p-4 flex items-center justify-between shadow-sm active:scale-[0.98] transition"
   >
     <div className="flex items-center gap-3">
-      <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-        <MapPin className="h-5 w-5 text-green-700" />
+      <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center">
+        <MapPin className="h-5 w-5 text-green-700 dark:text-green-300" />
       </div>
       <div>
-        <h4 className="font-bold text-green-700">Add New Address</h4>
-        <p className="text-xs text-gray-500">
+        <h4 className="font-bold text-green-700 dark:text-green-300">Add New Address</h4>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           No saved address found. Tap to add one.
         </p>
       </div>
     </div>
 
-    <button className="text-sm font-semibold text-green-700">
+    <button className="text-sm font-semibold text-green-700 dark:text-green-300">
       + Add
     </button>
   </div>
@@ -699,7 +699,7 @@ if (paymentMethod === "COD") {
 <div className="flex justify-end">
   <button
     onClick={() => setOpenAddAddress(true)}
-    className="text-sm font-semibold text-green-700 px-3 py-1 rounded hover:bg-green-50"
+    className="text-sm font-semibold text-green-700 dark:text-green-400 px-3 py-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
   >
     + Add Address
   </button>
@@ -707,26 +707,26 @@ if (paymentMethod === "COD") {
 
 
               {/* Payment Method Selection */}
-              <div className="rounded-xl bg-white p-4 shadow-sm">
-                <h3 className="mb-3 font-bold text-gray-900">Payment Method</h3>
+              <div className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h3 className="mb-3 font-bold text-gray-900 dark:text-gray-100">Payment Method</h3>
 
                 <div className="space-y-3">
                   <label
                     className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
                       paymentMethod === "ONLINE"
-                        ? "border-green-600 bg-green-50 ring-1 ring-green-600"
-                        : "border-gray-200 hover:bg-gray-50"
+                        ? "border-green-600 bg-green-50 dark:bg-green-900/20 ring-1 ring-green-600"
+                        : "border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                         <CreditCard className="h-5 w-5" />
                       </div>
                       <div>
-                        <span className="block font-semibold text-gray-900">
+                        <span className="block font-semibold text-gray-900 dark:text-gray-100">
                           Online Payment
                         </span>
-                        <span className="block text-xs text-gray-500">
+                        <span className="block text-xs text-gray-500 dark:text-gray-400">
                           UPI, Cards, Netbanking
                         </span>
                       </div>
@@ -743,19 +743,19 @@ if (paymentMethod === "COD") {
                   <label
                     className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
                       paymentMethod === "COD"
-                        ? "border-green-600 bg-green-50 ring-1 ring-green-600"
-                        : "border-gray-200 hover:bg-gray-50"
+                        ? "border-green-600 bg-green-50 dark:bg-green-900/20 ring-1 ring-green-600"
+                        : "border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-700">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
                         <Banknote className="h-5 w-5" />
                       </div>
                       <div>
-                        <span className="block font-semibold text-gray-900">
+                        <span className="block font-semibold text-gray-900 dark:text-gray-100">
                           Cash on Delivery
                         </span>
-                        <span className="block text-xs text-gray-500">
+                        <span className="block text-xs text-gray-500 dark:text-gray-400">
                           Pay accurately with cash
                         </span>
                       </div>
@@ -776,17 +776,17 @@ if (paymentMethod === "COD") {
               {/* Selected Address Block (moved to bottom, above pay button) */}
 {selectedAddress && !showAddressList && (
   <div
-    className={`fixed right-0 w-full max-w-md bg-white p-4 shadow-sm border-t border-gray-200 z-[10002]
+    className={`fixed right-0 w-full max-w-md bg-white dark:bg-gray-800 p-4 shadow-sm border-t border-gray-200 dark:border-gray-700 z-[100003]
       ${deliverable ? "bottom-24" : "bottom-28"}`}
   >
     <div className="flex items-start gap-3">
-      <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-100">
-        <MapPin className="h-4 w-4 text-gray-600" />
+      <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+        <MapPin className="h-4 w-4 text-gray-600 dark:text-gray-300" />
       </div>
 
       <div className="flex-1">
-        <h4 className="font-bold text-gray-900">{selectedAddress.type}</h4>
-        <p className="text-xs text-gray-500 line-clamp-1">
+        <h4 className="font-bold text-gray-900 dark:text-gray-100">{selectedAddress.type}</h4>
+        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
           {selectedAddress.address}, {selectedAddress.building},{" "}
           {selectedAddress.landmark}
         </p>
@@ -794,7 +794,7 @@ if (paymentMethod === "COD") {
 
       <button
         onClick={() => setShowAddressList(true)}
-        className="text-xs font-semibold text-green-700"
+        className="text-xs font-semibold text-green-700 dark:text-green-400"
       >
         Change
       </button>
@@ -803,10 +803,10 @@ if (paymentMethod === "COD") {
 )}
 
               {/* Sticky/Fixed Pay Button (Mobile & Desktop) */}
-              <div className="fixed bottom-0 right-0 w-full max-w-md bg-white p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border-t border-gray-200 z-[10001]">
+              <div className="fixed bottom-0 right-0 w-full max-w-md bg-white dark:bg-gray-800 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border-t border-gray-200 dark:border-gray-700 z-[100004]">
 
 {(!deliverable || !hasLocation) && (
-  <p className="text-red-600 text-sm font-semibold mb-2">
+  <p className="text-red-600 dark:text-red-400 text-sm font-semibold mb-2">
     {deliverabilityReason || "Select location to order"}
   </p>
 )}

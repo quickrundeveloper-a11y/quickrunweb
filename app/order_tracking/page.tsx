@@ -884,8 +884,8 @@ export default function BlinkitOrderTracking() {
 
   if (!userId) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Please log in to track your order.</p>
+      <div className="w-full min-h-screen bg-white dark:bg-gray-800 flex items-center justify-center">
+        <p className="text-gray-500 dark:text-gray-400">Please log in to track your order.</p>
       </div>
     );
   }
@@ -922,32 +922,32 @@ export default function BlinkitOrderTracking() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] pb-20">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-800 pb-20">
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,geometry`}
         strategy="afterInteractive"
       />
 
-      <div className="max-w-3xl mx-auto pt-12">
+      <div className="w-full max-w-3xl mx-auto pt-6 sm:pt-12 px-4 sm:px-6">
         {/* MAP + HEADER CARD */}
-        <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-          <div className="px-6 pt-6 pb-9 text-center">
-            <h1 className="text-2xl font-bold mt-1">Order is confirmed</h1>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden">
+          <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-9 text-center">
+            <h1 className="text-xl sm:text-2xl font-bold mt-1 text-gray-900 dark:text-gray-100">Order is confirmed</h1>
 
-            {orderId && <p className="text-gray-500 text-xs mt-1"></p>}
+            {orderId && <p className="text-gray-500 dark:text-gray-400 text-xs mt-1"></p>}
             {orderData?.status === "grocerry_accepted" ? (
-              <p className="text-gray-600 text-sm mt-1">
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
                 We'll assign a delivery partner as soon as your order is packed
               </p>
             ) : eta ? (
-              <p className="text-gray-600 text-sm mt-1">
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
                 Your order is arriving in {eta}
               </p>
             ) : null}
           </div>
 
-          <div className="rounded-3xl mx-4 mb-6 overflow-hidden shadow-sm relative">
-            <div ref={mapRef} className="w-full h-120" />
+          <div className="rounded-2xl sm:rounded-3xl mx-2 sm:mx-4 mb-4 sm:mb-6 overflow-hidden shadow-sm relative">
+            <div ref={mapRef} className="w-full h-64 sm:h-80 lg:h-120" />
 
             <button
               onClick={() => {
@@ -986,58 +986,58 @@ export default function BlinkitOrderTracking() {
                   });
                 }
               }}
-              className="absolute bottom-4 right-4 bg-white shadow-lg p-3 rounded-full border hover:bg-gray-100"
+              className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-white dark:bg-gray-700 shadow-lg p-2 sm:p-3 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
             >
-              <MdMyLocation className="w-6 h-6" />
+              <MdMyLocation className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
         </div>
 
         {/* LOWER SECTIONS */}
-        <div className="mt-8 space-y-4">
-          <div className="bg-white rounded-2xl shadow p-6">
+        <div className="mt-4 sm:mt-8 space-y-3 sm:space-y-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow p-4 sm:p-6">
             <div className="flex items-start gap-3">
-              <span className="text-yellow-500 text-3xl">🛵</span>
+              <span className="text-yellow-500 text-2xl sm:text-3xl">🛵</span>
               {orderData?.status === "grocerry_accepted" ? (
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
                   We'll assign a delivery partner as soon as your order is
                   packed
                 </p>
               ) : eta ? (
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
                   Your order is arriving in {eta}
                 </p>
               ) : (
-                <p className="font-medium text-gray-800">
+                <p className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
                   We'll assign a delivery partner as soon as your order is
                   packed
                 </p>
               )}
             </div>
             {orderData?.acceptedDriverDetails && (
-              <div className="mt-4 bg-white rounded-2xl px-4 py-4 shadow-sm">
+              <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-3 sm:py-4 shadow-sm">
 
-                <p className="font-semibold text-gray-800 text-lg mb-3">
+                <p className="font-semibold text-gray-800 dark:text-gray-200 text-base sm:text-lg mb-3">
                   Delivery Partner
                 </p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
 
                   {/* LEFT SIDE: NAME */}
-                  <div className="text-gray-700 font-medium text-base">
+                  <div className="text-gray-700 dark:text-gray-300 font-medium text-sm sm:text-base">
                     {orderData.acceptedDriverDetails.driverName}
                   </div>
 
                   {/* RIGHT SIDE: NUMBER + CALL BUTTON */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-gray-800 font-medium">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-gray-800 dark:text-gray-200 font-medium text-sm sm:text-base">
                       {orderData.acceptedDriverDetails.driverPhone}
                     </span>
 
                     {/* CALL BUTTON */}
                     <a
                       href={`tel:${orderData.acceptedDriverDetails.driverPhone}`}
-                      className=" text-white p-2 rounded-full shadow hover:bg-blue-300 active:scale-95 transition"
+                      className="text-white p-1.5 sm:p-2 rounded-full shadow hover:bg-blue-300 active:scale-95 transition text-sm sm:text-base"
                     >
                       📞
                     </a>
@@ -1046,29 +1046,29 @@ export default function BlinkitOrderTracking() {
               </div>
             )}
 
-            <p className="mt-4 bg-green-50 text-green-700 px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+            <p className="mt-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm flex items-center gap-2">
               <span>🛡</span>
               Your order is nearby seller's store
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow p-6">
-            <p className="font-semibold text-lg">Your delivery details</p>
-            <p className="text-gray-500 text-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow p-4 sm:p-6">
+            <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-gray-100">Your delivery details</p>
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
               Details of your current order
             </p>
 
-            <div className="space-y-4 mt-4">
+            <div className="space-y-3 sm:space-y-4 mt-4">
               <div className="flex gap-3">
-                <span>📍</span>
-                <p className="text-gray-700 leading-5">
+                <span className="text-lg">📍</span>
+                <p className="text-gray-700 dark:text-gray-300 leading-5 text-sm sm:text-base">
                   {orderData?.address?.address || "No address available"}
                 </p>
               </div>
 
               <div className="flex gap-3">
-                <span>📞</span>
-                <p className="text-gray-700">
+                <span className="text-lg">📞</span>
+                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                   {userProfile?.name || "No Name"}, {userProfile?.phone || "No Phone"}
                 </p>
               </div>
@@ -1076,19 +1076,19 @@ export default function BlinkitOrderTracking() {
 
           </div>
 
-          <div className="bg-white rounded-2xl shadow p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow p-4 sm:p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
             <div>
-              <p className="font-semibold text-lg">Need help?</p>
-              <p className="text-gray-500 text-sm">Chat with us for help</p>
+              <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-gray-100">Need help?</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">Chat with us for help</p>
             </div>
-            <span className="text-xl">›</span>
+            <span className="text-xl text-gray-400 dark:text-gray-500">›</span>
           </div>
 
-          <div className="bg-white rounded-2xl shadow p-6">
-            <p className="font-semibold text-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow p-4 sm:p-6">
+            <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-gray-100">
               {loadingRestaurants ? "Loading restaurant..." : (storeName || "Super Store UP-NCR Noida Sector 63A")}
             </p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
               Packing{" "}
               {orderData?.items?.length
                 ? `${orderData.items.length} item${
@@ -1105,23 +1105,23 @@ export default function BlinkitOrderTracking() {
                 {orderData.items.map((item: any, index: number) => (
                   <div
                     key={index}
-                    className="mt-4 flex items-center gap-4 border p-3 rounded-xl"
+                    className="mt-3 sm:mt-4 flex items-center gap-3 sm:gap-4 border border-gray-200 dark:border-gray-600 p-2 sm:p-3 rounded-lg sm:rounded-xl"
                   >
                     <img
                       src={item.image}
-                      className="h-16 w-16 object-cover rounded-lg bg-gray-100"
+                      className="h-12 w-12 sm:h-16 sm:w-16 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0"
                     />
-                    <div>
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-gray-600">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100 truncate">{item.name}</p>
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         {item.multiple} × {item.unit} • Qty {item.quantity}
                       </p>
-                      <p className="text-sm text-gray-800">₹{item.price}</p>
-                      <p className="text-xs text-gray-500 line-through">
+                      <p className="text-xs sm:text-sm text-gray-800 dark:text-gray-200">₹{item.price}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 line-through">
                         MRP ₹{item.mrp}
                       </p>
                       {item.restaurentId && restaurantNames[item.restaurentId] && (
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate">
                           From: {restaurantNames[item.restaurentId]}
                         </p>
                       )}
@@ -1130,53 +1130,55 @@ export default function BlinkitOrderTracking() {
                 ))}
               </>
             ) : (
-              <p className="text-gray-400 text-center py-6">
+              <p className="text-gray-400 dark:text-gray-500 text-center py-6 text-sm sm:text-base">
                 Loading your items...
               </p>
             )}
 
             <p
               onClick={() => setShowSummary(!showSummary)}
-              className="mt-4 text-green-600 text-sm font-semibold text-center cursor-pointer"
+              className="mt-4 text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold text-center cursor-pointer"
             >
               {showSummary ? "Hide order summary" : "View order summary"}
             </p>
 
             {showSummary && orderData?.items && (
-              <div className="mt-4 bg-white rounded-xl border p-4">
-                <h2 className="font-bold text-lg mb-2">Order Summary</h2>
+              <div className="mt-4 bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-600 p-3 sm:p-4">
+                <h2 className="font-bold text-base sm:text-lg mb-2 text-gray-900 dark:text-gray-100">Order Summary</h2>
 
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="py-2 text-left font-medium">Product</th>
-                      <th className="py-2 text-center font-medium">Qty</th>
-                      <th className="py-2 text-right font-medium">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orderData.items.map((item: any, index: number) => (
-                      <tr key={index} className="border-b">
-                        <td className="py-3">{item.name}</td>
-                        <td className="text-center">{item.quantity}</td>
-                        <td className="text-right">₹{item.price}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs sm:text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-gray-600">
+                        <th className="py-2 text-left font-medium text-gray-900 dark:text-gray-100">Product</th>
+                        <th className="py-2 text-center font-medium text-gray-900 dark:text-gray-100">Qty</th>
+                        <th className="py-2 text-right font-medium text-gray-900 dark:text-gray-100">Price</th>
                       </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                      {orderData.items.map((item: any, index: number) => (
+                        <tr key={index} className="border-b border-gray-200 dark:border-gray-600">
+                          <td className="py-2 sm:py-3 text-gray-800 dark:text-gray-200 truncate max-w-0">{item.name}</td>
+                          <td className="text-center text-gray-800 dark:text-gray-200">{item.quantity}</td>
+                          <td className="text-right text-gray-800 dark:text-gray-200">₹{item.price}</td>
+                        </tr>
+                      ))}
 
-                    <tr>
-                      <td className="py-3 font-bold text-lg">Total Bill</td>
-                      <td></td>
-                      <td className="text-right font-bold text-lg">
-                        ₹
-                        {orderData.items.reduce(
-                          (sum: number, it: any) =>
-                            sum + it.price * it.quantity,
-                          0
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                      <tr>
+                        <td className="py-2 sm:py-3 font-bold text-sm sm:text-lg text-gray-900 dark:text-gray-100">Total Bill</td>
+                        <td></td>
+                        <td className="text-right font-bold text-sm sm:text-lg text-gray-900 dark:text-gray-100">
+                          ₹
+                          {orderData.items.reduce(
+                            (sum: number, it: any) =>
+                              sum + it.price * it.quantity,
+                            0
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

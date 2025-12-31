@@ -253,18 +253,18 @@ export default function SearchClient() {
               <img
                 src="/img/shopclose.png"
                 alt="Shop Closed"
-                className="w-full object-contain"
+                className="w-full object-contain dark:invert"
               />
             </div>
           </div>
         )}
 
-        <div className="border border-[#e8e8e8] rounded-xl hover:shadow-md transition p-3 flex flex-col bg-white relative h-full">
-          <div className="flex flex-col items-start gap-4">
+        <div className="border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition p-3 flex flex-col bg-white dark:bg-gray-800 relative h-full">
+          <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
               <img
                 src={item.image}
-                className="w-full h-32 sm:h-36 object-contain bg-white rounded-lg"
+                className="w-full h-32 sm:h-36 object-contain bg-white dark:bg-gray-100 rounded-lg"
               />
 
               {qty <= 0 ? (
@@ -292,16 +292,16 @@ export default function SearchClient() {
               )}
             </div>
 
-            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 leading-tight">
+            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] leading-tight text-gray-900 dark:text-gray-100">
               {item.name}
             </p>
 
-            <p className="text-gray-500 text-[10px] sm:text-xs -mt-1">
+            <p className="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs -mt-1">
               {item.quantity} {item.unit}
             </p>
 
-            <div className="flex items-center gap-1">
-              <p className="font-bold text-sm sm:text-base">₹{item.price}</p>
+            <div className="flex items-center gap-1 -mt-1">
+              <p className="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100">₹{item.price}</p>
               {item.mrp > 0 && (
                 <p className="text-[10px] text-gray-400 line-through">
                   ₹{item.mrp}
@@ -309,7 +309,7 @@ export default function SearchClient() {
               )}
             </div>
 
-            <p className="min-h-[14px] text-[11px] leading-tight mt-0.5">
+            <p className="min-h-[14px] text-[11px] leading-tight -mt-1">
               {isOutOfStock ? (
                 <span className="text-red-600 font-medium">Out of stock</span>
               ) : (
@@ -320,6 +320,7 @@ export default function SearchClient() {
                 )
               )}
             </p>
+
           </div>
         </div>
       </div>
@@ -395,9 +396,9 @@ export default function SearchClient() {
 if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userLng) {
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white px-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-foreground px-4">
 
-      <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 text-center">
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 dark:text-gray-200 text-center">
         No Results Available in Your Location
       </h2>
 
@@ -411,16 +412,16 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
 
   // ------------------------------ NORMAL SEARCH PAGE ------------------------------
   return (
-    <div className="w-full min-h-screen flex flex-col">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-800 flex flex-col">
       <main className="flex-grow flex justify-center mt-8">
         <div className="w-full max-w-[1100px] px-4">
 
           {query && results.length > 0 && (
-            <p className="text-gray-800 text-xl mb-6">Showing results for "{query}"</p>
+            <p className="text-gray-800 dark:text-gray-200 text-xl mb-6">Showing results for "{query}"</p>
           )}
 
           {loading && (
-            <p className="text-center text-gray-600 mt-10">Loading…</p>
+            <p className="text-center text-gray-600 dark:text-gray-400 mt-10">Loading…</p>
           )}
 
           {/* Quick suggestions */}
@@ -431,9 +432,9 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
                 const { blocked, overlayText } = getCardState(item);
 
                 const content = (
-                  <div className="flex items-center gap-4 bg-white px-5 py-3 relative rounded-lg border border-gray-100">
+                  <div className="flex items-center gap-4 bg-white dark:bg-gray-800 px-5 py-3 relative rounded-lg border border-gray-100 dark:border-gray-700">
                     <img src={item.image} className="w-8 h-8 object-contain" />
-                    <span className="text-gray-900 text-[16px] font-medium">{item.name}</span>
+                    <span className="text-gray-900 dark:text-gray-100 text-[16px] font-medium">{item.name}</span>
                     <button
                       onClick={(e) => changeQuantity(item, 1, e)}
                       disabled={blocked}
@@ -452,10 +453,10 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
                   return (
                     <div key={item.id} className="relative cursor-not-allowed">
                       {content}
-                      <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center text-xs font-semibold text-gray-700 rounded-lg">
+                      <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-[1px] flex items-center justify-center text-xs font-semibold text-gray-700 dark:text-gray-300 rounded-lg">
                         {overlayText === "Shop Closed" ? (
                           <div className="flex flex-col items-center gap-2">
-                            <img src="/img/store.png" alt="Shop Closed" className="w-10 h-10 object-contain" />
+                            <img src="/img/store.png" alt="Shop Closed" className="w-10 h-10 object-contain dark:invert" />
                             <span>Shop Closed</span>
                           </div>
                         ) : (

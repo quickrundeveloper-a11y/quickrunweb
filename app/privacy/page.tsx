@@ -2,19 +2,19 @@
 
 export default function PrivacyPage() {
   return (
-    <div className="w-full min-h-screen bg-[#f5f7fa] flex justify-center py-10">
-      <div className="w-[92%] max-w-[1100px] bg-white rounded-3xl shadow-lg p-10 border border-gray-200">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-800 flex justify-center py-10">
+      <div className="w-[92%] max-w-[1100px] bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-10 border border-gray-200 dark:border-gray-700">
 
         {/* HEADER */}
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
           QuickRun – Privacy Policy
         </h1>
-        <p className="text-gray-600 mb-6">Last Updated: 12/11/25</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">Last Updated: 12/11/25</p>
 
-        <div className="h-px bg-gray-200 mb-8"></div>
+        <div className="h-px bg-gray-200 dark:bg-gray-600 mb-8"></div>
 
         {/* CONTENT */}
-        <div className="space-y-6 text-gray-800 leading-relaxed">
+        <div className="space-y-6 text-gray-800 dark:text-gray-200 leading-relaxed">
 
           <p>
             Welcome to QuickRun. This Privacy Policy explains how QuickRun
@@ -31,54 +31,54 @@ export default function PrivacyPage() {
           </p>
 
           {/* 1. Information We Collect */}
-          <h2 className="text-xl font-bold">1. Information We Collect</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">1. Information We Collect</h2>
           <p>
             We collect several types of information to provide and improve our
             Service.
           </p>
 
-          <h3 className="text-lg font-semibold mt-4">A. Information You Provide to Us</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-4">A. Information You Provide to Us</h3>
           <ul className="list-disc ml-6 space-y-1">
             <li>
-              <strong>Account Information:</strong> Your name, email, phone
+              <strong className="text-gray-900 dark:text-gray-100">Account Information:</strong> Your name, email, phone
               number, and delivery address.
             </li>
             <li>
-              <strong>Order Information:</strong> Details of items purchased,
+              <strong className="text-gray-900 dark:text-gray-100">Order Information:</strong> Details of items purchased,
               order history, and payment method.
             </li>
             <li>
-              <strong>Communications:</strong> Any messages or support queries
+              <strong className="text-gray-900 dark:text-gray-100">Communications:</strong> Any messages or support queries
               you send us.
             </li>
           </ul>
 
-          <h3 className="text-lg font-semibold mt-4">B. Information We Collect Automatically</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-4">B. Information We Collect Automatically</h3>
           <ul className="list-disc ml-6 space-y-1">
             <li>
-              <strong>Location Data:</strong> GPS, Wi-Fi, and IP-based
+              <strong className="text-gray-900 dark:text-gray-100">Location Data:</strong> GPS, Wi-Fi, and IP-based
               location for delivery and partner matching.
             </li>
             <li>
-              <strong>Usage Information:</strong> Your actions, searches, and
+              <strong className="text-gray-900 dark:text-gray-100">Usage Information:</strong> Your actions, searches, and
               pages viewed.
             </li>
             <li>
-              <strong>Device Information:</strong> Model, OS, identifiers, and
+              <strong className="text-gray-900 dark:text-gray-100">Device Information:</strong> Model, OS, identifiers, and
               network details.
             </li>
           </ul>
 
-          <h3 className="text-lg font-semibold mt-4">C. Information from Third Parties</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-4">C. Information from Third Parties</h3>
           <ul className="list-disc ml-6 space-y-1">
             <li>
-              <strong>Payment Information:</strong> Handled securely by our
+              <strong className="text-gray-900 dark:text-gray-100">Payment Information:</strong> Handled securely by our
               payment processor; we receive only confirmation data.
             </li>
           </ul>
 
           {/* 2. How We Use Your Information */}
-          <h2 className="text-xl font-bold mt-6">2. How We Use Your Information</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-6">2. How We Use Your Information</h2>
           <ul className="list-disc ml-6 space-y-1">
             <li>To create and manage your account.</li>
             <li>To process and deliver your orders.</li>
@@ -145,8 +145,8 @@ export default function PrivacyPage() {
           <a
             href="/"
             className="
-              bg-[#00b85c] text-white px-6 py-3 rounded-full text-lg font-semibold
-              shadow-md hover:bg-[#009a4e] transition-all
+              bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full text-lg font-semibold
+              shadow-md transition-all
             "
           >
             ← Back to Home

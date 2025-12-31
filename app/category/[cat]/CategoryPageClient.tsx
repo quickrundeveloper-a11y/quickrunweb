@@ -241,8 +241,8 @@ const tokens = tokenNorm(categoryName)
             </div>
           </div>
         )}
-        <div className="border border-[#e8e8e8] rounded-xl hover:shadow-md transition cursor-pointer p-3 flex flex-col justify-between bg-white relative">
-          <div className="flex flex-col items-start gap-4">
+        <div className="border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition cursor-pointer p-3 flex flex-col justify-between bg-white dark:bg-gray-800 relative">
+          <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
               <img
                 src={item.image}
@@ -274,24 +274,24 @@ const tokens = tokenNorm(categoryName)
               )}
             </div>
 
-            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px]">
+            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] text-gray-900 dark:text-gray-100">
               {item.title}
             </p>
 
-            <p className="text-gray-500 text-[10px] sm:text-xs">
+            <p className="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs -mt-1">
               {item.quantity} {item.unit}
             </p>
 
-            <div className="flex items-center gap-1">
-              <p className="font-bold text-sm sm:text-base">₹{item.price}</p>
+            <div className="flex items-center gap-1 -mt-1">
+              <p className="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100">₹{item.price}</p>
               {item.mrp > 0 && (
-                <p className="text-[10px] text-gray-400 line-through">
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 line-through">
                   ₹{item.mrp}
                 </p>
               )}
             </div>
 
-            <p className="min-h-[14px] text-[11px] leading-tight mt-0.5">
+            <p className="min-h-[14px] text-[11px] leading-tight -mt-1">
               {isOutOfStock ? (
                 <span className="text-red-600 font-medium">
                   Out of stock
@@ -434,15 +434,15 @@ const tokens = tokenNorm(categoryName)
 
   // ------------------ NORMAL PAGE UI ------------------
   return (
-    <div className="min-h-screen bg-white w-full pb-16 pt-6 flex justify-center">
+    <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground w-full pb-16 pt-6 flex justify-center">
       <div className="w-full max-w-7xl px-3 sm:px-6">
 
-        <h2 className="text-xl sm:text-2xl font-bold mb-6 capitalize">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 capitalize text-gray-900 dark:text-gray-100">
           {categoryName || "Category"}
         </h2>
 
         {loading && (
-          <p className="text-center text-gray-500 mt-10">Loading…</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 mt-10">Loading…</p>
         )}
 
         <div

@@ -7,10 +7,10 @@ export default function ReferralComponent() {
     <div className="w-full px-6 py-10">
 
       {/* MAIN CARD */}
-      <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
         {/* TOP GRADIENT HEADER */}
-        <div className="bg-gradient-to-br from-[#00b85c] to-[#66e696] p-6 relative text-white rounded-t-3xl">
+        <div className="bg-gradient-to-br from-green-600 to-green-400 p-6 relative text-white rounded-t-3xl">
           <h1 className="text-2xl font-bold leading-snug">
             Get 25% OFF • Your Friends Get Pass @ ₹1!
           </h1>
@@ -23,13 +23,13 @@ export default function ReferralComponent() {
         </div>
 
         {/* HOW IT WORKS */}
-        <div className="p-6 bg-white">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">How it works</h2>
+        <div className="p-6 bg-white dark:bg-gray-800">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">How it works</h2>
 
-          <div className="space-y-4 text-gray-700">
+          <div className="space-y-4 text-gray-700 dark:text-gray-300">
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 flex items-center justify-center bg-[#e8fff0] text-[#00b85c] rounded-full">
+              <div className="w-6 h-6 flex items-center justify-center bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-sm font-semibold">
                 1
               </div>
               <p>
@@ -39,7 +39,7 @@ export default function ReferralComponent() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 flex items-center justify-center bg-[#e8fff0] text-[#00b85c] rounded-full">
+              <div className="w-6 h-6 flex items-center justify-center bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-sm font-semibold">
                 2
               </div>
               <p>
@@ -50,7 +50,7 @@ export default function ReferralComponent() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 flex items-center justify-center bg-[#e8fff0] text-[#00b85c] rounded-full">
+              <div className="w-6 h-6 flex items-center justify-center bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-sm font-semibold">
                 3
               </div>
               <p>
@@ -65,7 +65,7 @@ export default function ReferralComponent() {
           <div className="mt-8 space-y-4">
 
             {/* WhatsApp */}
-            <button className="w-full border border-gray-300 rounded-xl py-3 flex items-center justify-center gap-3 text-lg font-medium hover:bg-gray-50 transition active:scale-[0.98]">
+            <button className="w-full border border-gray-300 dark:border-gray-600 rounded-xl py-3 flex items-center justify-center gap-3 text-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition active:scale-[0.98] text-gray-900 dark:text-gray-100">
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
                 className="w-6 h-6"
@@ -74,8 +74,8 @@ export default function ReferralComponent() {
             </button>
 
             {/* Share Link */}
-            <button className="w-full border border-gray-300 rounded-xl py-3 flex items-center justify-center gap-3 text-lg font-medium hover:bg-gray-50 transition active:scale-[0.98]">
-              <Share2 size={22} className="text-gray-700" />
+            <button className="w-full border border-gray-300 dark:border-gray-600 rounded-xl py-3 flex items-center justify-center gap-3 text-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition active:scale-[0.98] text-gray-900 dark:text-gray-100">
+              <Share2 size={22} className="text-gray-700 dark:text-gray-300" />
               Share Invite Link
             </button>
 
@@ -83,13 +83,13 @@ export default function ReferralComponent() {
         </div>
 
         {/* REFERRAL LIST HEADER */}
-        <div className="border-t py-4 px-6 text-center bg-[#f9fbff]">
-          <h3 className="text-lg font-semibold text-gray-800">Your Referrals</h3>
+        <div className="border-t border-gray-200 dark:border-gray-700 py-4 px-6 text-center bg-gray-50 dark:bg-gray-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Your Referrals</h3>
         </div>
 
         {/* EMPTY STATE */}
-        <div className="px-6 py-10 text-center text-gray-500">
-          <div className="w-16 h-16 rounded-full bg-gray-100 mx-auto mb-3 flex items-center justify-center text-2xl">
+        <div className="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
+          <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mx-auto mb-3 flex items-center justify-center text-2xl">
             👥
           </div>
           You haven't referred anyone yet.

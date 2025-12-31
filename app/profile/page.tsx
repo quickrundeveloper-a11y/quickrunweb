@@ -137,25 +137,25 @@ case "addresses":
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#f5f7fa] flex justify-center py-5 md:py-10 relative">
+    <div className="w-full min-h-screen bg-gray-100 dark:bg-gray-800 flex justify-center py-5 md:py-10 relative">
       {showLogoutPopup && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-[360px] border border-green-200">
-            <p className="font-semibold text-lg text-center">
+        <div className="fixed inset-0 bg-black/30 dark:bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-[90%] max-w-[360px]">
+            <p className="font-semibold text-lg text-center text-gray-900 dark:text-gray-100">
               Are you sure you want to logout?
             </p>
 
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowLogoutPopup(false)}
-                className="flex-1 py-2 rounded-full border bg-white hover:bg-gray-100"
+                className="flex-1 py-2 rounded-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleLogout}
-                className="flex-1 py-2 rounded-full bg-[#ff0000] text-white"
+                className="flex-1 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white"
               >
                 Logout
               </button>
@@ -164,22 +164,22 @@ case "addresses":
         </div>
       )}
 
-      <div className="w-full md:w-[92%] max-w-[1300px] bg-white rounded-none md:rounded-3xl shadow-lg flex flex-col md:flex-row overflow-hidden">
+      <div className="w-full md:w-[92%] max-w-[1300px] bg-white dark:bg-gray-800 rounded-none md:rounded-3xl shadow-lg flex flex-col md:flex-row overflow-hidden">
         {/* LEFT SIDEBAR */}
-        <div className="w-full md:w-[350px] border-b md:border-b-0 md:border-r border-gray-200 bg-white">
-          <div className="p-6 flex items-center gap-4 border-b border-gray-200">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00b85c] to-[#76e39b] flex items-center justify-center text-2xl font-bold text-white shadow-md">
+        <div className="w-full md:w-[350px] border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="p-6 flex items-center gap-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-green-400 flex items-center justify-center text-2xl font-bold text-white shadow-md">
               {profileName ? profileName[0].toUpperCase() : "U"}
             </div>
 
             <div>
-              <p className="font-semibold text-lg">{profileName || "User"}</p>
-              <p className="text-sm text-gray-600">{profilePhone || "---"}</p>
+              <p className="font-semibold text-lg text-gray-900 dark:text-gray-100">{profileName || "User"}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{profilePhone || "---"}</p>
             </div>
           </div>
 
           {/* MOBILE NAV TABS */}
-          <div className="flex md:hidden overflow-x-auto gap-3 px-4 py-3 bg-[#f6f9ff]">
+          <div className="flex md:hidden overflow-x-auto gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-700">
             {[
               { key: "orders", label: "Orders", icon: "🧾" },
               { key: "support", label: "Support", icon: "🎧" },
@@ -192,8 +192,8 @@ case "addresses":
                 onClick={() => setActivePage(item.key)}
                 className={`px-4 py-2 rounded-full flex items-center gap-2 whitespace-nowrap text-sm ${
                   activePage === item.key
-                    ? "bg-[#00b85c] text-white"
-                    : "bg-white border"
+                    ? "bg-green-600 text-white"
+                    : "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
                 }`}
               >
                 <span>{item.icon}</span>
@@ -233,7 +233,7 @@ case "addresses":
           <div className="mt-8 px-6 hidden md:block">
             <button
               onClick={() => setShowLogoutPopup(true)}
-              className="w-full bg-red-50 text-red-500 py-2 rounded-full border"
+              className="w-full bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 py-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30"
             >
               ⏏ Log Out
             </button>
@@ -241,7 +241,7 @@ case "addresses":
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="flex-1 bg-[#f6f9ff] p-4 md:p-0 flex justify-start items-start">
+        <div className="flex-1 bg-gray-50 dark:bg-gray-700 p-4 md:p-0 flex justify-start items-start">
 
           {renderPage()}
           {showAddPanel && (
@@ -283,21 +283,21 @@ function SidebarItem({
     <button
       onClick={onClick}
       className="
-        w-full px-5 py-3 flex items-center justify-between text-sm text-gray-800 
+        w-full px-5 py-3 flex items-center justify-between text-sm text-gray-800 dark:text-gray-200
         rounded-2xl mx-4 relative overflow-hidden transition-all
       "
     >
-      <span className="absolute inset-0 bg-[#f4fff8] opacity-0 hover:opacity-100 transition"></span>
-      <span className="absolute inset-0 rounded-2xl border border-transparent hover:border-[#00b85c] transition pointer-events-none"></span>
+      <span className="absolute inset-0 bg-green-50 dark:bg-green-900/20 opacity-0 hover:opacity-100 transition"></span>
+      <span className="absolute inset-0 rounded-2xl transition pointer-events-none"></span>
 
       <div className="flex items-center gap-3 relative z-10">
-        <div className="w-8 h-8 rounded-full bg-[#f4fff8] flex items-center justify-center text-base">
+        <div className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-base">
           {icon}
         </div>
         <span className="font-medium">{label}</span>
       </div>
 
-      <span className="text-gray-400 text-xs relative z-10">›</span>
+      <span className="text-gray-400 dark:text-gray-500 text-xs relative z-10">›</span>
     </button>
   );
 }

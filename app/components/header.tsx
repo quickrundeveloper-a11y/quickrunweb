@@ -221,9 +221,7 @@ useEffect(() => {
   return (
     <>
     {/* TOP DOWNLOAD STRIP */}
-
-{/* TOP DOWNLOAD STRIP */}
-<div className="fixed top-0 left-0 w-full bg-[#f5f5f5] text-gray-700 flex items-center justify-center gap-3 h-[26px] text-[11px] sm:text-xs z-[99999]">
+<div className="fixed top-0 left-0 w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center gap-3 h-[26px] text-[11px] sm:text-xs z-[99999]">
   <span className="flex items-center">Download app on Playstore and Appstore</span>
 
   {/* Playstore */}
@@ -259,34 +257,34 @@ useEffect(() => {
 
 
 
-     <header className={`${lexend.className} w-full bg-white fixed top-[24px] left-0 z-50`}>
+     <header className={`${lexend.className} w-full bg-white dark:bg-gray-800 fixed top-[24px] left-0 z-50 border-b border-gray-200 dark:border-gray-700`}>
 
 
         <div className="w-full px-3 py-2 flex sm:hidden items-center justify-between">
 
           {/* LEFT — LOGO + LOCATION */}
           <div className="flex items-center gap-4 flex-shrink-0">
-<Link href="/" className="relative z-[9999] inline-block" >
+<Link href="/" className="relative z-[9999] inline-block pl-4" >
   <Image
     src="/logo.png"
     alt="logo"
     width={120}
     height={80}
-    className="h-12 sm:h-20 w-auto object-contain cursor-pointer"
+    className="h-20 sm:h-28 w-auto object-contain cursor-pointer"
     priority
   />
 </Link>
 
-            <div className="h-14 sm:h-20 w-px bg-gray-300"></div>
+            <div className="h-20 sm:h-28 w-px bg-gray-300 dark:bg-gray-600"></div>
             <div>
               <button
                 onClick={() => setShowAddressModal(true)}
-                className="text-xl sm:text-2xl font-semibold text-gray-900 flex items-center gap-1 hover:text-black whitespace-nowrap"
+                className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1 hover:text-black dark:hover:text-white whitespace-nowrap"
               >
                 {loadingLocation ? "Fetching..." : location} 
                 <span className="text-[10px] sm:text-xs">▼</span>
               </button>
-              <p className="text-xs sm:text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] sm:max-w-none">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] sm:max-w-none">
                 {loadingLocation ? "" : fullAddress}
               </p>
             </div>
@@ -305,16 +303,16 @@ useEffect(() => {
               backgroundImage: `url("https://api.dicebear.com/9.x/glass/svg?seed=${initial || "A"}")`,
             }}
           >
-            {loggedIn ? initial : <User size={18} className="text-gray-700" />}
+            {loggedIn ? initial : <User size={18} className="text-gray-700 dark:text-gray-300" />}
           </div>
 
           {showFullSearch && (
             <div className="w-full flex sm:hidden mt-1 px-2">
-              <div className="w-full flex items-center bg-white border border-gray-300 rounded-full px-5 py-4">
+              <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
 <input
   type="text"
   placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700"
+  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
   value={searchQuery}
 
   // 👇 CLICK → open search page immediately
@@ -342,7 +340,7 @@ useEffect(() => {
 
 
                 <button onClick={() => setShowFullSearch(false)}>
-                  <span className="text-gray-600 ml-3 text-lg">✖</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-3 text-lg">✖</span>
                 </button>
               </div>
             </div>
@@ -350,11 +348,11 @@ useEffect(() => {
 
           {/* DESKTOP SEARCH BAR */}
           <div className="hidden sm:flex flex-1 mx-8 lg:mx-20">
-            <div className="w-full flex items-center bg-white border border-gray-300 rounded-full px-5 py-4">
+            <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
 <input
   type="text"
   placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700"
+  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
   value={searchQuery}
 
   // 👇 CLICK → open search page immediately
@@ -381,7 +379,7 @@ useEffect(() => {
 
 
 
-              <Search size={20} className="text-gray-600 ml-3" />
+              <Search size={20} className="text-gray-600 dark:text-gray-400 ml-3" />
             </div>
           </div>
         </div>
@@ -390,11 +388,11 @@ useEffect(() => {
         <div className="w-full sm:hidden px-3 mt-2">
           <div className="w-full flex items-center gap-3">
 
-            <div className="flex-1 flex items-center bg-white border border-gray-300 rounded-full px-5 py-3">
+            <div className="flex-1 flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-3">
 <input
   type="text"
   placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700"
+  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
   value={searchQuery}
 
   // 👇 CLICK → open search page immediately
@@ -421,15 +419,15 @@ useEffect(() => {
 
 
 
-              <Search size={20} className="text-gray-600 ml-3" />
+              <Search size={20} className="text-gray-600 dark:text-gray-400 ml-3" />
             </div>
 
             {/* Hamburger Menu Button */}
             <button
               onClick={() => setOpenMenu(true)}
-              className="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+              className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 p-3 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
             >
-              <Menu className="h-5 w-5 text-gray-700" />
+              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
 
             <button
@@ -448,7 +446,7 @@ useEffect(() => {
 
           {/* LEFT SIDE — LOGO + LOCATION */}
           <div className="flex items-center gap-6">
-           <Link href="/" className="relative z-[9999] inline-block" >
+           <Link href="/" className="relative z-[9999] inline-block pl-4" >
   <Image
     src="/logo.png"
     alt="logo"
@@ -462,13 +460,13 @@ useEffect(() => {
             <div>
               <button
                 onClick={() => setShowAddressModal(true)}
-                className="text-2xl font-semibold text-gray-900 flex items-center gap-1 hover:text-black whitespace-nowrap"
+                className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1 hover:text-black dark:hover:text-white whitespace-nowrap"
               >
                 {loadingLocation ? "Fetching..." : location}
                 <span className="text-xs">▼</span>
               </button>
 
-              <p className="text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis max-w-[260px]">
+              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[260px]">
                 {loadingLocation ? "" : fullAddress}
               </p>
             </div>
@@ -476,11 +474,11 @@ useEffect(() => {
 
           {/* CENTER — SEARCH BAR */}
           <div className="flex-1 mx-8 lg:mx-20">
-            <div className="w-full flex items-center bg-white border border-gray-300 rounded-full px-5 py-4">
+            <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
 <input
   type="text"
   placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700"
+  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
   value={searchQuery}
 
   // 👇 CLICK → open search page immediately
@@ -507,7 +505,7 @@ useEffect(() => {
 
 
 
-              <Search size={22} className="text-gray-600 ml-3" />
+              <Search size={22} className="text-gray-600 dark:text-gray-400 ml-3" />
             </div>
           </div>
 
@@ -516,9 +514,9 @@ useEffect(() => {
             {/* Hamburger Menu Button */}
             <button
               onClick={() => setOpenMenu(true)}
-              className="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg flex items-center justify-center transition-colors"
+              className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 p-3 rounded-lg flex items-center justify-center transition-colors"
             >
-              <Menu className="h-5 w-5 text-gray-700" />
+              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
 
             <div
@@ -541,7 +539,7 @@ useEffect(() => {
                 backgroundImage: `url("https://api.dicebear.com/9.x/glass/svg?seed=${initial || "A"}")`,
               }}
             >
-              {loggedIn ? initial : <User size={18} className="text-gray-700" />}
+              {loggedIn ? initial : <User size={18} className="text-gray-700 dark:text-gray-300" />}
             </div>
           </div>
         </div>
@@ -550,11 +548,11 @@ useEffect(() => {
       {/* ADDRESS MODAL */}
       {showAddressModal && (
         <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center">
-          <div className={`${lexend.className} bg-white w-[540px] max-h-[90vh] p-5 overflow-y-auto shadow-xl`}>
+          <div className={`${lexend.className} bg-white dark:bg-gray-800 w-[540px] max-h-[90vh] p-5 overflow-y-auto shadow-xl border border-gray-200 dark:border-gray-700 rounded-lg`}>
 
             <div className={`${lexend.className} flex justify-between items-center mb-4`}>
-              <h2 className="text-lg font-semibold">Change Location</h2>
-              <button onClick={() => setShowAddressModal(false)} className="text-xl">✖</button>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Change Location</h2>
+              <button onClick={() => setShowAddressModal(false)} className="text-xl text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">✖</button>
             </div>
 
             <div className={`${lexend.className} flex items-center gap-3 mb-4`}>
@@ -609,26 +607,26 @@ fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&l
                 Detect my location
               </button>
 
-              <div className="text-gray-400 font-semibold">OR</div>
+              <div className="text-gray-400 dark:text-gray-500 font-semibold">OR</div>
 
              <input
   type="text"
   placeholder="search delivery location"
   value={locationQuery}
   onChange={(e) => setLocationQuery(e.target.value)}
-  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none"
+  className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded-lg px-4 py-3 outline-none"
 />
 
             </div>
 
             {(locationQuery.length >= 3) && (
-              <p className="text-sm text-gray-600 mb-2 px-1">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 px-1">
                 Searching locations for "<span className="font-semibold">{searchQuery}</span>"
               </p>
             )}
 
             {searchLoading && (
-              <p className="text-sm text-gray-500 px-1 mb-2">Loading results…</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 px-1 mb-2">Loading results…</p>
             )}
 
             {searchResults.length > 0 && (
@@ -670,15 +668,15 @@ onClick={async () => {
 
 
 
-                    className="w-full text-left px-4 py-4 hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
+                    className="w-full text-left px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-800 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                   >
                     <div className="flex items-center gap-3">
-                      <img src="/location.png" alt="loc" className="w-5 h-5 object-contain" />
+                      <img src="/location.png" alt="loc" className="w-5 h-5 object-contain dark:invert" />
                       <div>
-                        <p className="font-medium text-base">
+                        <p className="font-medium text-base text-gray-900 dark:text-gray-100">
                           {loc.structured_formatting?.main_text}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {loc.structured_formatting?.secondary_text}
                         </p>
                       </div>
@@ -705,7 +703,7 @@ onClick={async () => {
 
       {/* CART SIDEBAR */}
       {openCart && (
-        <div className="fixed inset-0 z-[300] flex justify-end">
+        <div className="fixed inset-0 z-[100010] flex justify-end">
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setOpenCart(false)}

@@ -35,6 +35,20 @@ export default function QRFGroupPage() {
           --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --black: #ffffff;
+            --dark-gray: #e5e5e5;
+            --medium-gray: #cccccc;
+            --light-gray: #999999;
+            --lighter-gray: #777777;
+            --lightest-gray: #374151;
+            --white: #374151;
+            --border-color: #4b5563;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          }
+        }
+
         .qrf-page-body {
           font-family: "Lexend", sans-serif;
           // background: #fafafa;

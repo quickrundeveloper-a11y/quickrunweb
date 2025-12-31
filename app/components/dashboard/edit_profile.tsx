@@ -123,7 +123,7 @@ export default function EditProfileComponent({
   if (loading) {
     return (
       <div className="w-full px-6 py-10 flex items-center justify-center">
-        <p className="text-gray-500">Loading profile...</p>
+        <p className="text-gray-500 dark:text-gray-400">Loading profile...</p>
       </div>
     );
   }
@@ -132,7 +132,7 @@ export default function EditProfileComponent({
   if (!userId) {
     return (
       <div className="w-full px-6 py-10 flex items-center justify-center">
-        <p className="text-red-500 font-semibold">
+        <p className="text-red-500 dark:text-red-400 font-semibold">
           You must be logged in to edit your profile.
         </p>
       </div>
@@ -141,14 +141,14 @@ export default function EditProfileComponent({
 
   return (
     <div className="w-full px-6 py-10">
-      <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
           Edit Profile
         </h1>
 
         {/* Avatar */}
         <div className="flex justify-center mb-10">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#00b85c] to-[#7dff9c] flex items-center justify-center shadow-md">
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-500 to-green-400 flex items-center justify-center shadow-md">
             <span className="text-5xl font-bold text-white">
               {name ? name[0].toUpperCase() : "Q"}
             </span>
@@ -159,81 +159,81 @@ export default function EditProfileComponent({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Name */}
           <div>
-            <label className="text-gray-500 text-sm">Name</label>
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 bg-gray-50 outline-none focus:border-[#00b85c] transition"
+              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none focus:border-green-600 dark:focus:border-green-500 transition"
             />
           </div>
 
           {/* Mobile */}
           <div>
-            <label className="text-gray-500 text-sm">Mobile</label>
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Mobile</label>
             <input
               type="text"
               value={phone}
               disabled
-              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 bg-gray-100 text-gray-500 outline-none cursor-not-allowed"
+              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 outline-none cursor-not-allowed"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="text-gray-500 text-sm">Email</label>
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
-              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 bg-gray-50 outline-none focus:border-[#00b85c] transition"
+              className="w-full mt-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 outline-none focus:border-green-600 dark:focus:border-green-500 transition"
             />
           </div>
 
           {/* Gender */}
           <div>
-            <label className="text-gray-500 text-sm">Gender</label>
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Gender</label>
 
             <div className="mt-2 relative">
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full appearance-none p-4 rounded-2xl border border-gray-200 bg-gray-50 outline-none focus:border-[#00b85c] transition cursor-pointer"
+                className="w-full appearance-none p-4 rounded-2xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 outline-none focus:border-green-600 dark:focus:border-green-500 transition cursor-pointer"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
-              <ChevronDown className="w-5 h-5 text-gray-600 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
           {/* DOB */}
           <div>
-            <label className="text-gray-500 text-sm">Date of Birth</label>
-            <div className="mt-2 flex items-center bg-gray-50 p-4 rounded-2xl border border-gray-200 hover:bg-gray-100 transition">
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Date of Birth</label>
+            <div className="mt-2 flex items-center bg-gray-50 dark:bg-gray-700 p-4 rounded-2xl border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
               <input
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className="w-full outline-none bg-transparent"
+                className="w-full outline-none bg-transparent text-gray-900 dark:text-gray-100"
               />
-              <Calendar className="w-5 h-5 text-gray-600" />
+              <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
           </div>
 
           {/* Anniversary */}
           <div>
-            <label className="text-gray-500 text-sm">Anniversary</label>
-            <div className="mt-2 flex items-center bg-gray-50 p-4 rounded-2xl border border-gray-200 hover:bg-gray-100 transition">
+            <label className="text-gray-500 dark:text-gray-400 text-sm">Anniversary</label>
+            <div className="mt-2 flex items-center bg-gray-50 dark:bg-gray-700 p-4 rounded-2xl border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
               <input
                 type="date"
                 value={anniversary}
                 onChange={(e) => setAnniversary(e.target.value)}
-                className="w-full outline-none bg-transparent"
+                className="w-full outline-none bg-transparent text-gray-900 dark:text-gray-100"
               />
-              <Calendar className="w-5 h-5 text-gray-600" />
+              <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
           </div>
         </div>
@@ -245,11 +245,10 @@ export default function EditProfileComponent({
             disabled={saving}
             className="
               w-full md:w-64 
-              bg-[#00b85c] text-white 
+              bg-green-600 hover:bg-green-700 text-white 
               text-lg font-semibold 
               py-4 rounded-full 
               shadow-md 
-              hover:bg-[#009e4e] 
               transition
               disabled:opacity-60 disabled:cursor-not-allowed
             "
@@ -258,7 +257,7 @@ export default function EditProfileComponent({
           </button>
 
           {message && (
-            <p className="text-sm text-gray-600 text-center">{message}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">{message}</p>
           )}
         </div>
       </div>

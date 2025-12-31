@@ -29,7 +29,7 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
 
       {/* ✅ Google Tag Manager */}
@@ -124,7 +124,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
       </head>
 
-      <body className={lexend.className}>
+      <body className={`${lexend.className} bg-white dark:bg-gray-800`}>
         
           {/* ✅ Google Tag Manager (noscript) */}
   <noscript>

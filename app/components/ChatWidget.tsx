@@ -140,10 +140,10 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
       className="
         w-[350px]
         h-[550px]
-        bg-white
+        bg-white dark:bg-gray-800
         rounded-2xl
         shadow-xl
-        border border-gray-200
+        border border-gray-200 dark:border-gray-700
         p-4
         fixed
         bottom-10
@@ -160,21 +160,21 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
             className="w-10 h-10 rounded-full shadow"
           />
           <div>
-            <div className="text-lg font-semibold">QuickRun Assistant</div>
-            <div className="text-xs text-gray-500">Ask anything, I'm here.</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">QuickRun Assistant</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Ask anything, I'm here.</div>
           </div>
         </div>
 
         <button
           onClick={onClose}
-          className="text-gray-600 hover:text-black text-xl"
+          className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white text-xl"
         >
           ✕
         </button>
       </div>
 
       {/* MESSAGES */}
-      <div className="rounded-xl p-3 overflow-y-auto h-[400px] bg-gray-50 border">
+      <div className="rounded-xl p-3 overflow-y-auto h-[400px] bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
         <div className="flex flex-col gap-3">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -193,8 +193,8 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
                     msg.from === "user"
                       ? "bg-green-600 text-white rounded-br-none"
                       : msg.from === "system"
-                      ? "bg-yellow-50 text-gray-800"
-                      : "bg-white text-gray-900"
+                      ? "bg-yellow-50 dark:bg-yellow-900/30 text-gray-800 dark:text-yellow-200"
+                      : "bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
                   }`}
                 >
                   {msg.text}
@@ -208,8 +208,8 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-2"
               >
-                <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse" />
-                <div className="text-sm text-gray-500">Assistant typing...</div>
+                <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 animate-pulse" />
+                <div className="text-sm text-gray-500 dark:text-gray-400">Assistant typing...</div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -226,7 +226,7 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type your message..."
-            className="w-full px-4 py-3 rounded-full border outline-none bg-white"
+            className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
           />
 
          
@@ -239,7 +239,7 @@ export default function QuickRunChatWidget({ onClose }: { onClose: () => void })
           className={`px-5 py-3 rounded-full font-semibold shadow-md ${
             loading
               ? "bg-gray-400 cursor-not-allowed text-white"
-              : "bg-green-600 text-white"
+              : "bg-green-600 hover:bg-green-700 text-white"
           }`}
         >
           {loading ? "…" : "Send"}

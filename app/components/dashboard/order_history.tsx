@@ -57,27 +57,27 @@ export default function OrdersComponent() {
 
   return (
     <div className="w-full h-full overflow-y-auto px-5 py-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-5">Orders</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-5">Orders</h1>
 
       {/* 6. UPDATED CONDITIONAL RENDERING: !user -> !userId */}
       {!userId && (
-        <div className="bg-white p-6 rounded-xl shadow text-center">
-          Please login to view orders.
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
+          <p className="text-gray-900 dark:text-gray-100">Please login to view orders.</p>
         </div>
       )}
 
       {/* 7. UPDATED CONDITIONAL RENDERING: loading && user -> loading && userId */}
       {loading && userId && (
-        <div className="bg-white p-6 rounded-xl shadow text-center">
-          Loading orders...
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
+          <p className="text-gray-900 dark:text-gray-100">Loading orders...</p>
         </div>
       )}
 
       {/* 8. UPDATED CONDITIONAL RENDERING: user -> userId */}
       {userId && !loading && orders.length === 0 && (
-        <div className="bg-white p-10 rounded-xl shadow text-center">
-          <p className="text-lg font-semibold">No Orders</p>
-          <p className="text-gray-500 text-sm">
+        <div className="bg-white dark:bg-gray-800 p-10 rounded-xl shadow border border-gray-200 dark:border-gray-700 text-center">
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">No Orders</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             Start shopping to see your orders here.
           </p>
         </div>
@@ -101,37 +101,37 @@ export default function OrdersComponent() {
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 flex items-start gap-4"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition p-4 flex items-start gap-4 border border-gray-200 dark:border-gray-700"
               >
                 <img
                   src={order.items?.[0]?.image || "/qr-logo.png"}
-                  className="w-12 h-12 rounded-lg bg-gray-100 object-cover"
+                  className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 object-cover"
                 />
 
                 <div className="flex-1">
 
                   <div className="flex items-center justify-between">
-                    <p className="text-[16px] font-bold text-gray-900">
+                    <p className="text-[16px] font-bold text-gray-900 dark:text-gray-100">
                       #{shortId(order.id)}
                     </p>
 
-                    <p className="text-[15px] font-semibold text-gray-800">
+                    <p className="text-[15px] font-semibold text-gray-800 dark:text-gray-200">
                       ₹ {amount}
                     </p>
                   </div>
 
-                  <p className="text-gray-600 text-sm mt-1 truncate">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 truncate">
                     {itemNames || "Items"}
                   </p>
 
-                  <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mt-1">
                     <Clock className="w-3 h-3" />
                     {getDate(order.createdAt)}
                   </div>
 
                   <div className="flex items-center gap-2 mt-2">
-                    <CheckCircle className="text-green-600 w-4 h-4" />
-                    <p className="text-sm font-semibold text-green-600">
+                    <CheckCircle className="text-green-600 dark:text-green-500 w-4 h-4" />
+                    <p className="text-sm font-semibold text-green-600 dark:text-green-500">
                       {order.status || "Delivered"}
                     </p>
                   </div>

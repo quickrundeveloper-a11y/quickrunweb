@@ -15,10 +15,10 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       <main
         className={
           hideHeaderFooter
-            ? ""
+            ? "bg-white dark:bg-gray-800 text-foreground min-h-screen"
             : // Extra top padding so content never hides behind the fixed header + download strip,
               // tuned for mobile first and slightly smaller on larger screens.
-              "pt-[150px] sm:pt-32 lg:pt-28"
+              "pt-[150px] sm:pt-32 lg:pt-28 bg-white dark:bg-gray-800 text-foreground min-h-screen"
         }
       >
         {children}

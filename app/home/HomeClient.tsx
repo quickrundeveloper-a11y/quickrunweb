@@ -42,6 +42,21 @@ export default function HomeClient() {
   // SNACKBAR
   const [snack, setSnack] = React.useState("");
 
+  // SCROLL TO RECOMMENDED SECTION
+  const scrollToRecommended = () => {
+    const element = document.getElementById('recommended-section');
+    if (element) {
+      const headerHeight = window.innerWidth >= 640 ? 110 : 165; // Desktop: 106px, Mobile: 120px (more generous)
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // LAZY LOADING STATES
   const [allItems, setAllItems] = React.useState<any[]>([]);
   const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
@@ -83,11 +98,11 @@ function OrderAlertUI() {
         className="
           hidden sm:flex 
           fixed right-6 bottom-6 z-50
-          bg-white text-gray-800
+          bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200
           rounded-2xl shadow-xl
           p-3 w-[320px]
           items-center justify-between
-          border border-gray-200
+          border border-gray-200 dark:border-gray-700
           animate-slide-up
         "
       >
@@ -95,7 +110,7 @@ function OrderAlertUI() {
           <div className="bg-green-50 p-2 rounded-lg">
             <img 
               src="/img/delivery.png" 
-              className="w-8 h-8" 
+              className="w-8 h-8 dark:invert" 
               alt="Delivery"
             />
           </div>
@@ -127,7 +142,7 @@ function OrderAlertUI() {
         className="
           sm:hidden
           fixed bottom-0 left-0 right-0
-          bg-white border-t border-gray-200
+          bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700
           shadow-lg
           px-4 py-3 z-50
           animate-slide-up
@@ -138,7 +153,7 @@ function OrderAlertUI() {
             <div className="bg-green-50 p-1.5 rounded-lg">
               <img 
                 src="/img/delivery.png" 
-                className="w-7 h-7" 
+                className="w-7 h-7 dark:invert" 
                 alt="Delivery"
               />
             </div>
@@ -397,15 +412,15 @@ async function sendRequest() {
       <img
         src="/img/shopclose.png"
         alt="Shop Closed"
-        className="w-full object-contain"
+        className="w-full object-contain dark:invert"
       />
     </div>
   </div>
 )}
 
-       <div className="border border-[#e8e8e8] rounded-xl hover:shadow-md transition p-3 flex flex-col bg-white relative h-full">
+        <div className="border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition p-3 flex flex-col bg-white dark:bg-gray-800 relative h-full">
 
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
               <img
                 src={item.image}
@@ -434,25 +449,23 @@ async function sendRequest() {
               )}
             </div>
   
-            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 leading-tight">
-
+            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] leading-tight text-gray-900 dark:text-gray-100">
               {item.title}
             </p>
   
-            <p className="text-gray-500 text-[10px] sm:text-xs -mt-1">
-
+            <p className="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs -mt-1">
               {item.quantity} {item.unit}
             </p>
   
-            <div className="flex items-center gap-1">
-              <p className="font-bold text-sm sm:text-base">₹{item.price}</p>
+            <div className="flex items-center gap-1 -mt-1">
+              <p className="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100">₹{item.price}</p>
               {item.mrp > 0 && (
                 <p className="text-[10px] text-gray-400 line-through">
                   ₹{item.mrp}
                 </p>
               )}
             </div>
-  <p className="min-h-[14px] text-[11px] leading-tight mt-0.5">
+  <p className="min-h-[14px] text-[11px] leading-tight -mt-1">
     {isOutOfStock ? (
       <span className="text-red-600 font-medium">Out of stock</span>
     ) : (
@@ -523,7 +536,7 @@ function getCardState(item: any) {
 
 
   return (
-    <div className="min-h-screen bg-white w-full pb-16">
+    <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground w-full pb-16 overflow-x-hidden">
       {(currentOrder && Object.keys(currentOrder).length > 0) && <OrderAlertUI />}
 
 
@@ -531,23 +544,23 @@ function getCardState(item: any) {
       <div className="px-2 sm:px-6 md:px-10 mt-4 sm:mt-6">
         <div className="relative">
           <button
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 dark:bg-gray-700 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
             onClick={() => {
               const el = document.getElementById("cat-scroll");
               if (el) el.scrollBy({ left: -150, behavior: "smooth" });
             }}
           >
-            <span className="text-black text-xs">←</span>
+            <span className="text-black dark:text-white text-xs">←</span>
           </button>
 
           <button
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 dark:bg-gray-700 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
             onClick={() => {
               const el = document.getElementById("cat-scroll");
               if (el) el.scrollBy({ left: 150, behavior: "smooth" });
             }}
           >
-            <span className="text-black text-xs">→</span>
+            <span className="text-black dark:text-white text-xs">→</span>
           </button>
 
           <div id="cat-scroll" className="overflow-x-scroll no-scrollbar">
@@ -562,7 +575,7 @@ function getCardState(item: any) {
                     src={cat.image}
                     className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover rounded-lg bg-gray-100"
                   />
-                  <p className="mt-2 text-xs sm:text-sm font-semibold whitespace-normal text-center">
+                  <p className="mt-2 text-xs sm:text-sm font-semibold whitespace-normal text-center text-gray-900 dark:text-gray-100">
                     {cat.name}
                   </p>
                 </div>
@@ -611,11 +624,12 @@ function getCardState(item: any) {
               }
 
               return (
-                <Link href={href}>
-                  <button className="mt-3 sm:mt-5 px-5 sm:px-6 py-2 bg-yellow-400 text-black font-semibold rounded-lg hover:bg-yellow-300 transition shadow-md">
-                    Order Now →
-                  </button>
-                </Link>
+                <button 
+                  onClick={scrollToRecommended}
+                  className="mt-3 sm:mt-5 px-5 sm:px-6 py-2 bg-yellow-400 text-black font-semibold rounded-lg hover:bg-yellow-300 transition shadow-md"
+                >
+                  Order Now →
+                </button>
               );
             })()}
           </div>
@@ -623,7 +637,7 @@ function getCardState(item: any) {
       </div>
 
       {/* SECTION TITLE */}
-      <h2 className="text-lg sm:text-xl font-bold mt-10 sm:mt-12 mb-4 px-2 sm:px-6 md:px-10">
+      <h2 id="recommended-section" className="text-lg sm:text-xl font-bold mt-10 sm:mt-12 mb-4 px-2 sm:px-6 md:px-10 text-gray-900 dark:text-gray-100">
         Recommended for you
       </h2>
 

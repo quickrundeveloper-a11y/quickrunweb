@@ -145,11 +145,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`${lexend.className} w-full h-screen flex items-center justify-center bg-[#ffffff]`}>
-      <div className="w-[95%] h-[100%] bg-white rounded-3xl overflow-hidden flex max-[600px]:flex-col">
+    <div className={`${lexend.className} w-full h-screen flex items-center justify-center bg-background`}>
+      <div className="w-[95%] h-[100%] bg-white dark:bg-gray-900 rounded-3xl overflow-hidden flex max-[600px]:flex-col border border-gray-200 dark:border-gray-700">
 
         {/* LEFT SECTION */}
-        <div className="w-1/2 h-full relative flex items-center bg-white max-[600px]:hidden">
+        <div className="w-1/2 h-full relative flex items-center bg-white dark:bg-gray-900 max-[600px]:hidden">
           <div className="w-full h-[90%] px-6 py-10 relative flex justify-center">
             <Image
               src="/food_login2.png"
@@ -166,22 +166,22 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT SECTION */}
-        <div className="w-1/2 h-full bg-white px-20 py-30 flex flex-col relative max-[600px]:w-full max-[600px]:px-6 max-[600px]:py-10">
-          <h1 className="text-5xl font-regular mb-4 max-[600px]:text-4xl">Get Started Now</h1>
-          <p className="text-[#7D7D7D] font-light mb-10 max-[600px]:text-base">
+        <div className="w-1/2 h-full bg-white dark:bg-gray-900 px-20 py-30 flex flex-col relative max-[600px]:w-full max-[600px]:px-6 max-[600px]:py-10">
+          <h1 className="text-5xl font-regular mb-4 max-[600px]:text-4xl text-gray-900 dark:text-gray-100">Get Started Now</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-light mb-10 max-[600px]:text-base">
             Please login into your account to continue
           </p>
 
 
           {askName && (
             <>
-              <label className="text-sm font-light">Enter your name</label>
+              <label className="text-sm font-light text-gray-700 dark:text-gray-300">Enter your name</label>
 <div className="relative w-full">
  <input
   type="text"
   value={name}
   onChange={(e) => setName(e.target.value)}
-  className="border rounded-lg border-[#8D8D8D] w-full h-12 px-4 mt-2 mb-6 outline-none"
+  className="border rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full h-12 px-4 mt-2 mb-6 outline-none"
   placeholder="Full Name"
 />
 </div>
@@ -196,7 +196,7 @@ export default function LoginPage() {
           )}
 
           {/* Phone number */}
-          <label className="text-sm font-light">Phone number</label>
+          <label className="text-sm font-light text-gray-700 dark:text-gray-300">Phone number</label>
           <div className="relative w-full">
             <input
               type="text"
@@ -205,7 +205,7 @@ export default function LoginPage() {
               onChange={(e) =>
                 setPhone(e.target.value.replace(/[^0-9]/g, "").slice(-10))
               }
-              className="border rounded-lg border-[#8D8D8D] w-full h-15 px-4 mt-2 mb-6 outline-none"
+              className="border rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full h-15 px-4 mt-2 mb-6 outline-none"
               placeholder="Enter phone number"
             />
 
@@ -222,7 +222,7 @@ export default function LoginPage() {
           {otpEnabled && (
             <>
               {/* OTP */}
-              <label className="text-sm font-light">OTP</label>
+              <label className="text-sm font-light text-gray-700 dark:text-gray-300">OTP</label>
               <div className="flex gap-4 mt-2 mb-6 max-[600px]:gap-2">
                 {otpValues.map((val, i) => (
                   <input
@@ -249,7 +249,7 @@ export default function LoginPage() {
                       }
                     }}
                     id={`otp-${i}`}
-                    className="border border-[#8D8D8D] w-14 h-14 rounded-lg text-center text-lg outline-none max-[600px]:w-10 max-[600px]:h-10"
+                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-14 h-14 rounded-lg text-center text-lg outline-none max-[600px]:w-10 max-[600px]:h-10"
                   />
                 ))}
               </div>
@@ -260,7 +260,7 @@ export default function LoginPage() {
                   type="checkbox"
                   className="w-6 h-6 border border-[#8D8D8D] rounded-md cursor-pointer"
                 />
-                <span className="text-sm">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   Please accept our <strong>Terms & Condition</strong>
                 </span>
               </div>

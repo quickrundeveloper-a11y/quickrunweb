@@ -35,19 +35,19 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
 
       {/* Sheet */}
       <div className={`
-        fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-2xl z-[100000]
+        fixed top-0 right-0 h-full w-full sm:w-80 bg-white dark:bg-gray-800 shadow-2xl z-[100000]
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         min-h-screen
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900">Menu</h2>
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-50 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
@@ -56,7 +56,7 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
           
           {/* About Us Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">
               About Us
             </h3>
             <nav className="space-y-2">
@@ -65,7 +65,7 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
                   key={index}
                   href={item.href}
                   onClick={onClose}
-                  className="block w-full text-left p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="block w-full text-left p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
                   <span className="font-medium text-base">{item.label}</span>
                 </Link>
@@ -75,7 +75,7 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
 
           {/* Quick Links Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">
               Quick Links
             </h3>
             <nav className="space-y-2">
@@ -84,7 +84,7 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
                   key={index}
                   href={item.href}
                   onClick={onClose}
-                  className="block w-full text-left p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="block w-full text-left p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
                   <span className="font-medium text-base">{item.label}</span>
                 </Link>
@@ -94,9 +94,9 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-100">
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700">
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-500">QuickRun</p>
+            <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">QuickRun</p>
           </div>
         </div>
       </div>
