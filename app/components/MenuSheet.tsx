@@ -12,8 +12,7 @@ interface MenuSheetProps {
 export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
   const aboutUsItems = [
     { label: 'Our Story', href: '/story' },
-    { label: 'Official Franchise', href: '/official-franchise' },
-    { label: 'Retailer Franchise', href: '/franchise' },
+    { label: 'Official Franchise', href: '/franchise' },
   ];
 
   const quickLinksItems = [

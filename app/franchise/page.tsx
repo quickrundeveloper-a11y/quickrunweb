@@ -28,11 +28,11 @@ import {
   BarChart3,
   Globe,
   Award,
-  Package,
   ShoppingBag,
   Building,
   Download,
-  Search
+  Search,
+  Bike
 } from "lucide-react";
 
 type FormType = {
@@ -68,13 +68,134 @@ const inter = Inter({
   weight: ['300', '400', '500', '600']
 });
 
+const franchiseTypes: FranchiseType[] = [
+    {
+      id: 1,
+      title: "Mother Franchise",
+      investment: "₹1 Crore",
+      icon: <Building className="w-14 h-14" />,
+      color: "from-blue-900 to-blue-800",
+      bgColor: "bg-gradient-to-br from-blue-50 to-blue-100/30",
+      borderColor: "border-blue-200",
+      features: [
+        "Full District Coverage",
+        "Master Delivery Services",
+        "High Revenue Potential",
+        "District Level Operations",
+        "Priority onboarding + business training",
+        "Growth incentives for scaling operations",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
+      ],
+      description: "District Level Operations",
+      roi: "High revenue potential",
+      duration: "5-7 years"
+    },
+    {
+      id: 2,
+      title: "Super Platinum",
+      investment: "₹50 Lac",
+      icon: <Globe className="w-14 h-14" />,
+      color: "from-emerald-900 to-emerald-800",
+      bgColor: "bg-gradient-to-br from-emerald-50 to-emerald-100/30",
+      borderColor: "border-emerald-200",
+      features: [
+        "Regional Hub Control",
+        "Strategic Area Rights",
+        "Growth Incentives",
+        "Partial District Level Operations",
+        "Operational training & support",
+        "Performance-based expansion support",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
+      ],
+      description: "Partial District Level",
+      roi: "High revenue potential",
+      duration: "4-6 years"
+    },
+    {
+      id: 3,
+      title: "Super Franchise",
+      investment: "₹25 Lac",
+      icon: <Store className="w-14 h-14" />,
+      color: "from-amber-900 to-amber-800",
+      bgColor: "bg-gradient-to-br from-amber-50 to-amber-100/30",
+      borderColor: "border-amber-200",
+      features: [
+        "Block Level Governance",
+        "Local Hub Management",
+        "Block Level Operations",
+        "Training + operational support",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
+      ],
+      description: "Block Level",
+      roi: "Commission based",
+      duration: "3-5 years"
+    },
+    {
+      id: 4,
+      title: "Mini Franchise",
+      investment: "₹5 Lac",
+      icon: <Home className="w-14 h-14" />,
+      color: "from-violet-900 to-violet-800",
+      bgColor: "bg-gradient-to-br from-violet-50 to-violet-100/30",
+      borderColor: "border-violet-200",
+      features: [
+        "Local Market Rights",
+        "Direct Village Reach",
+        "Low Entry Cost",
+        "Village Market Coverage",
+        "Training + app access included",
+        "Growth incentives for sales performance",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
+      ],
+      description: "Village Market Coverage",
+      roi: "Commission based",
+      duration: "1-3 years"
+    },
+    {
+      id: 5,
+      title: "Delivery Partner (Tier 5)",
+      investment: "Free of Cost",
+      icon: <Bike className="w-14 h-14" />,
+      color: "from-emerald-900 to-emerald-800",
+      bgColor: "bg-gradient-to-br from-emerald-50 to-emerald-100/30",
+      borderColor: "border-emerald-200",
+      features: [
+        "Zero Investment",
+        "Start Earning Immediately",
+        "Be your own boss",
+        "No joining fees",
+        "Instant payouts",
+        "Insurance coverage",
+      ],
+      description: "Tier 5 - Zero Investment Model",
+      roi: "Order based earning",
+      duration: "Lifetime"
+    }
+  ];
+
 export default function LandingPage() {
 const [form, setForm] = useState<FormType>({
   name: "",
   email: "",
   phone: "",
   city: "",
-  plan: "Super Franchise — ₹25,00,000",
+  plan: "Mother Franchise — ₹1 Crore",
   message: "",
 });
 
@@ -123,7 +244,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       email: "",
       phone: "",
       city: "",
-      plan: "Super Franchise — ₹25,00,000",
+      plan: "Mother Franchise — ₹1 Crore",
       message: "",
     });
 
@@ -171,81 +292,121 @@ const getSlideWidth = (): number => {
 const franchiseTypes: FranchiseType[] = [
     {
       id: 1,
-      title: "Super Franchise",
-      investment: "₹25,00,000",
+      title: "Mother Franchise",
+      investment: "₹1 Crore",
       icon: <Building className="w-14 h-14" />,
       color: "from-blue-900 to-blue-800",
       bgColor: "bg-gradient-to-br from-blue-50 to-blue-100/30",
       borderColor: "border-blue-200",
       features: [
-        "Exclusive rights for a large territory",
-        "Can appoint & manage outlet franchises in your region",
-        "High revenue share from all outlets under you",
-        "Full branding & operational support",
+        "Full District Coverage",
+        "Master Delivery Services",
+        "High Revenue Potential",
+        "District Level Operations",
         "Priority onboarding + business training",
-        "Logistics & supply chain included"
+        "Growth incentives for scaling operations",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
       ],
-      description: "Perfect for investors wanting to manage large territories with maximum scalability.",
-      roi: "₹50-70L/year",
+      description: "District Level Operations",
+      roi: "High revenue potential",
       duration: "5-7 years"
     },
     {
       id: 2,
-      title: "Outlet Franchise",
-      investment: "₹5,00,000",
-      icon: <Store className="w-14 h-14" />,
+      title: "Super Platinum",
+      investment: "₹50 Lac",
+      icon: <Globe className="w-14 h-14" />,
       color: "from-emerald-900 to-emerald-800",
       bgColor: "bg-gradient-to-br from-emerald-50 to-emerald-100/30",
       borderColor: "border-emerald-200",
       features: [
-        "Setup of a micro-warehouse / delivery store",
-        "Support for inventory, onboarding, packaging & operations",
-        "Full staff training + delivery operations guidance",
-        "Access to QuickRunFast technology, dashboard & seller system",
-        "Standard marketing & branding support"
+        "Regional Hub Control",
+        "Strategic Area Rights",
+        "Growth Incentives",
+        "Partial District Level Operations",
+        "Operational training & support",
+        "Performance-based expansion support",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
       ],
-      description: "Ideal for entrepreneurs establishing a local delivery business with full support.",
-      roi: "₹15-25L/year",
-      duration: "3-5 years"
+      description: "Partial District Level",
+      roi: "High revenue potential",
+      duration: "4-6 years"
     },
     {
       id: 3,
-      title: "Mini Franchise",
-      investment: "₹25,000",
-      icon: <Home className="w-14 h-14" />,
+      title: "Super Franchise",
+      investment: "₹25 Lac",
+      icon: <Store className="w-14 h-14" />,
       color: "from-amber-900 to-amber-800",
       bgColor: "bg-gradient-to-br from-amber-50 to-amber-100/30",
       borderColor: "border-amber-200",
       features: [
-        "No warehouse needed",
-        "Can operate from home or a small shop",
-        "Very low setup cost",
-        "Can sell limited product categories",
-        "Training + app access included",
-        "Per-order commission + Monthly sales performance incentives"
+        "Block Level Governance",
+        "Local Hub Management",
+        "Block Level Operations",
+        "Training + operational support",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
       ],
-      description: "Perfect for small shop owners or individuals starting with minimal investment.",
-      roi: "₹3-8L/year",
-      duration: "1-2 years"
+      description: "Block Level",
+      roi: "Commission based",
+      duration: "3-5 years"
     },
     {
       id: 4,
-      title: "Vendor Code Franchise",
-      investment: "Zero / Minimal",
-      icon: <Package className="w-14 h-14" />,
+      title: "Mini Franchise",
+      investment: "₹5 Lac",
+      icon: <Home className="w-14 h-14" />,
       color: "from-violet-900 to-violet-800",
       bgColor: "bg-gradient-to-br from-violet-50 to-violet-100/30",
       borderColor: "border-violet-200",
       features: [
-        "Unique vendor code to list products on the platform",
-        "Access to thousands of active buyers",
-        "Support for catalog creation & product uploads",
-        "Regular payment settlements",
-        "Suitable for grocery, FMCG, vegetables, bakery, homemade items, and more"
+        "Local Market Rights",
+        "Direct Village Reach",
+        "Low Entry Cost",
+        "Village Market Coverage",
+        "Training + app access included",
+        "Growth incentives for sales performance",
+        "Partnership Terms & Structure",
+        "7% Sales Commission: You will receive a 7% commission on the gross value of every transaction.",
+        "75% Investment Support: The company will invest 75% towards business expenses, including warehouse setup, product supply, and staff charges.",
+        "Operational Costs (Partner): All expenses related to rent, internal staff salaries, and delivery rickshaw operations must be fully borne by the Partner.",
+        "Delivery Boy Charges: Under this agreement, the company will be responsible for paying all delivery boy charges."
       ],
-      description: "Perfect for small shop owners or individuals starting with minimal investment.",
-      roi: "₹1-5L/year",
-      duration: "Flexible"
+      description: "Village Market Coverage",
+      roi: "Commission based",
+      duration: "1-3 years"
+    },
+    {
+      id: 5,
+      title: "Delivery Partner (Tier 5)",
+      investment: "Free of Cost",
+      icon: <Bike className="w-14 h-14" />,
+      color: "from-emerald-900 to-emerald-800",
+      bgColor: "bg-gradient-to-br from-emerald-50 to-emerald-100/30",
+      borderColor: "border-emerald-200",
+      features: [
+        "Zero Investment",
+        "Start Earning Immediately",
+        "Be your own boss",
+        "No joining fees",
+        "Instant payouts",
+        "Insurance coverage",
+      ],
+      description: "Tier 5 - Zero Investment Model",
+      roi: "Order based earning",
+      duration: "Lifetime"
     }
   ];
 
@@ -256,7 +417,7 @@ const franchiseTypes: FranchiseType[] = [
     { value: "500+", label: "Franchise Partners", icon: <Users className="w-6 h-6" /> }
   ];
 
-  const getMaxSlides = (): number => {
+  const calculateMaxSlides = (): number => {
     if (typeof window === "undefined") return franchiseTypes.length - 1;
     const w = window.innerWidth;
     
@@ -265,8 +426,21 @@ const franchiseTypes: FranchiseType[] = [
     return franchiseTypes.length - 3;                 // Desktop: show 3, can slide to show last card
   };
 
+  const [maxSlides, setMaxSlides] = useState(franchiseTypes.length - 1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxSlides(calculateMaxSlides());
+    };
+    
+    // Set initial value on mount
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const nextSlide = () => {
-    const maxSlides = getMaxSlides();
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlides));
   };
 
@@ -430,9 +604,9 @@ const franchiseTypes: FranchiseType[] = [
 
   <button
     onClick={nextSlide}
-    disabled={currentSlide >= getMaxSlides()}
+    disabled={currentSlide >= maxSlides}
     className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 flex items-center justify-center transition-colors ${
-      currentSlide >= getMaxSlides()
+      currentSlide >= maxSlides
         ? 'opacity-50 cursor-not-allowed'
         : 'hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer'
     }`}
@@ -444,7 +618,7 @@ const franchiseTypes: FranchiseType[] = [
   {/* Slider Track */}
   <div className="overflow-hidden">
     <div
-      className="flex transition-transform duration-500 ease-out"
+      className="flex items-start transition-transform duration-500 ease-out"
       style={{
         transform: `translateX(-${currentSlide * getSlideWidth()}%)`,
       }}
@@ -470,7 +644,19 @@ const franchiseTypes: FranchiseType[] = [
                 </div>
                 <div className="text-right">
                   <p className={`text-sm text-gray-600 dark:text-gray-300 mb-1 ${inter.className}`}>Investment</p>
-                  <h3 className={`text-xl font-semibold text-gray-900 dark:text-white ${playfair.className}`}>{type.investment}</h3>
+                  <h3
+                    className={`text-2xl font-bold ${inter.className} ${
+                      type.id === 1
+                        ? "text-blue-600"
+                        : type.id === 2
+                          ? "text-purple-600"
+                          : type.id === 3
+                            ? "text-blue-600"
+                            : "text-emerald-600"
+                    }`}
+                  >
+                    {type.investment}
+                  </h3>
                 </div>
               </div>
               <h3 className={`text-2xl font-semibold text-gray-900 dark:text-white mb-3 ${playfair.className}`}>{type.title}</h3>
@@ -491,12 +677,21 @@ const franchiseTypes: FranchiseType[] = [
               {openCard === type.id && (
                 <div className="border-t border-gray-200 dark:border-gray-600 pt-6 mb-8">
                   <ul className="space-y-3">
-                    {type.features.slice(4).map((f, i) => (
-                      <li key={i} className={`flex items-start space-x-3 ${inter.className}`}>
-                        <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
-                        <span className="text-gray-600 dark:text-gray-300 text-sm">{f}</span>
-                      </li>
-                    ))}
+                    {type.features.slice(4).map((f, i) => {
+                      if (f === "Partnership Terms & Structure") {
+                        return (
+                          <li key={i} className={`block mt-6 mb-2 ${inter.className}`}>
+                            <span className="text-gray-900 dark:text-white font-bold text-base">{f}</span>
+                          </li>
+                        );
+                      }
+                      return (
+                        <li key={i} className={`flex items-start space-x-3 ${inter.className}`}>
+                          <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
+                          <span className="text-gray-600 dark:text-gray-300 text-sm">{f}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
@@ -522,7 +717,7 @@ const franchiseTypes: FranchiseType[] = [
 
   {/* Slider Dots */}
   <div className="flex justify-center gap-2 mt-8">
-    {Array.from({ length: getMaxSlides() + 1 }).map((_, i) => (
+    {Array.from({ length: maxSlides + 1 }).map((_, i) => (
       <button
         key={i}
         onClick={() => setCurrentSlide(i)}
@@ -531,6 +726,8 @@ const franchiseTypes: FranchiseType[] = [
       />
     ))}
   </div>
+
+
 
 </div>
 
@@ -620,10 +817,11 @@ const franchiseTypes: FranchiseType[] = [
                         value={form.plan}
                         onChange={(e) => setForm({ ...form, plan: e.target.value })}
                       >
-                        <option>Super Franchise — ₹25,00,000</option>
-                        <option>Outlet Franchise — ₹5,00,000</option>
-                        <option>Mini Franchise — ₹25,000</option>
-                        <option>Vendor Code Franchise - Zero / Minimal</option>
+                        <option>Mother Franchise — ₹1 Crore</option>
+                        <option>Super Platinum — ₹50 Lac</option>
+                        <option>Super Franchise — ₹25 Lac</option>
+                        <option>Mini Franchise — ₹5 Lac</option>
+                        <option>Delivery Partner (Tier 5) — Free of Cost</option>
                       </select>
                     </div>
 

@@ -79,19 +79,15 @@ export default function Footer() {
           </h3>
 
           <ul className="space-y-2 text-gray-500 dark:text-gray-400 text-sm">
-             <li>
+            <li>
               <a href="/story" className="hover:text-gray-700 dark:hover:text-gray-300">
                 Our Story
               </a>
             </li>
-            <li>
-              <a href="/official-franchise" className="hover:text-gray-700 dark:hover:text-gray-300">
-                Official Franchise
-              </a>
-            </li>
+
              <li>
               <a href="/franchise" className="hover:text-gray-700 dark:hover:text-gray-300">
-                Retailer Franchise
+                Official Franchise
               </a>
             </li>
           
