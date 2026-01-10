@@ -458,18 +458,18 @@ const franchiseTypes: FranchiseType[] = [
     <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground">
 
       {/* About QuickRun Section */}
-      <section className="py-20 md:py-32 bg-white dark:bg-gray-800">
+      <section className="py-6 md:py-12 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center max-w-4xl mx-auto mb-20">
+          <div className="text-center max-w-4xl mx-auto mb-6">
             <h1 className={`text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 dark:text-white leading-tight mb-8 ${playfair.className}`}>
               About QuickRun
             </h1>
             
-            <p className={`text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 max-w-3xl mx-auto ${inter.className} font-light`}>
+            <p className={`text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8 max-w-3xl mx-auto ${inter.className} font-light`}>
               QuickRun is India's premier instant delivery network, revolutionizing how people access groceries and essentials. We deliver in minutes, not hours, through our strategically positioned micro-fulfillment centers and advanced logistics technology.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12 border-t border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8 border-t border-gray-200 dark:border-gray-600">
               <div className="text-center">
                 <div className={`text-4xl font-semibold text-gray-900 dark:text-white mb-2 ${playfair.className}`}>Minutes</div>
                 <div className={`text-gray-600 dark:text-gray-300 ${inter.className}`}>Ultra-Fast Delivery</div>
@@ -488,18 +488,18 @@ const franchiseTypes: FranchiseType[] = [
       </section>
 
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
+      <section className="py-6 md:py-12 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className={`text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white leading-tight mb-8 ${playfair.className}`}>
+            <h2 className={`text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white leading-tight mb-6 ${playfair.className}`}>
               Franchise Opportunities
             </h2>
             
-            <p className={`text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 max-w-3xl mx-auto ${inter.className} font-light`}>
+            <p className={`text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8 max-w-3xl mx-auto ${inter.className} font-light`}>
               Join our growing network of successful franchise partners. Multiple investment options with comprehensive support and proven business models.
             </p>
             
-            <div className="flex justify-center mb-16">
+            <div className="flex justify-center mb-8">
               <button 
                 onClick={scrollToForm}
                 className={`bg-gray-900 hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-12 py-4 font-medium transition-colors flex items-center justify-center space-x-3 ${inter.className}`}
@@ -510,7 +510,7 @@ const franchiseTypes: FranchiseType[] = [
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-gray-200 dark:border-gray-600">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className={`text-3xl font-semibold text-gray-900 dark:text-white mb-2 ${playfair.className}`}>
@@ -526,57 +526,10 @@ const franchiseTypes: FranchiseType[] = [
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 md:py-32 bg-white dark:bg-gray-800">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className={`text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-6 ${playfair.className}`}>
-              Why Partner with QuickRun
-            </h2>
-            <p className={`text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ${inter.className} font-light`}>
-              Comprehensive support system designed for your success
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((benefit, index) => (
-              <div 
-                key={index}
-                className="bg-white dark:bg-gray-900 p-8 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
-              >
-                <div className="mb-6 text-gray-900 dark:text-white">
-                  {benefit.icon}
-                </div>
-                
-                <h3 className={`text-xl font-semibold text-gray-900 dark:text-white mb-4 ${playfair.className}`}>
-                  {benefit.title}
-                </h3>
-                <p className={`text-gray-600 dark:text-gray-300 leading-relaxed mb-6 ${inter.className}`}>
-                  {benefit.description}
-                </p>
-                
-                <div className="pt-6 border-t border-gray-200 dark:border-gray-600">
-                  <ul className="space-y-3">
-                    <li className={`flex items-start space-x-3 ${inter.className}`}>
-                      <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">Weekly training sessions</span>
-                    </li>
-                    <li className={`flex items-start space-x-3 ${inter.className}`}>
-                      <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">Dedicated account manager</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Franchise Types Section with Slider */}
-      <section className="py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
+      <section className="py-6 md:py-12 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div className="text-center mb-6">
             <h2 className={`text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-6 ${playfair.className}`}>
               Franchise Models
             </h2>
@@ -733,6 +686,55 @@ const franchiseTypes: FranchiseType[] = [
 
         </div>
       </section>
+
+      {/* Benefits Section */}
+      <section className="py-6 md:py-12 bg-white dark:bg-gray-800">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-6">
+            <h2 className={`text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-6 ${playfair.className}`}>
+              Why Partner with QuickRun
+            </h2>
+            <p className={`text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ${inter.className} font-light`}>
+              Comprehensive support system designed for your success
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit, index) => (
+              <div 
+                key={index}
+                className="bg-white dark:bg-gray-900 p-8 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+              >
+                <div className="mb-6 text-gray-900 dark:text-white">
+                  {benefit.icon}
+                </div>
+                
+                <h3 className={`text-xl font-semibold text-gray-900 dark:text-white mb-4 ${playfair.className}`}>
+                  {benefit.title}
+                </h3>
+                <p className={`text-gray-600 dark:text-gray-300 leading-relaxed mb-6 ${inter.className}`}>
+                  {benefit.description}
+                </p>
+                
+                <div className="pt-6 border-t border-gray-200 dark:border-gray-600">
+                  <ul className="space-y-3">
+                    <li className={`flex items-start space-x-3 ${inter.className}`}>
+                      <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
+                      <span className="text-gray-700 dark:text-gray-300 text-sm">Weekly training sessions</span>
+                    </li>
+                    <li className={`flex items-start space-x-3 ${inter.className}`}>
+                      <div className="w-1.5 h-1.5 bg-gray-900 dark:bg-gray-300 rounded-full mt-2.5 flex-shrink-0"></div>
+                      <span className="text-gray-700 dark:text-gray-300 text-sm">Dedicated account manager</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+     
 
       {/* Enquiry Form Section */}
       <section id="enquiry-form" className="py-20 md:py-32 bg-white dark:bg-gray-800">
