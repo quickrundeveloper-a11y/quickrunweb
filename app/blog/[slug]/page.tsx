@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -199,10 +200,21 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
               />
             </div>
           )}
-          <div className="p-5 md:p-6 space-y-4">
-            <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+          <div className="p-5 md:p-6 space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+            <ReactMarkdown
+              components={{
+                a: ({ node, ...props }) => (
+                  <a
+                    {...props}
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+              }}
+            >
               {post.content}
-            </p>
+            </ReactMarkdown>
           </div>
         </article>
 
