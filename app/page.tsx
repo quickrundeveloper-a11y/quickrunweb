@@ -89,7 +89,7 @@ export default function Page() {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "INR",
-          "description": "Free Instant Delivery"
+          "description": "Get free instant delivery of groceries and essentials within minutes. Download Quickrun for the fastest shopping experience in India"
         }
       }
     ]
