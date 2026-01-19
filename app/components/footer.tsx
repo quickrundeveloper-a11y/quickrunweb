@@ -1,6 +1,8 @@
-"use client";
+ "use client";
+import { useState } from "react";
 
 export default function Footer() {
+  const [expanded, setExpanded] = useState(false);
   return (
     <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
 
@@ -84,13 +86,16 @@ export default function Footer() {
                 Our Story
               </a>
             </li>
-
-             <li>
-              <a href="/franchise" className="hover:text-gray-700 dark:hover:text-gray-300">
-                Official Franchise
+            <li>
+              <a href="/blog" className="hover:text-gray-700 dark:hover:text-gray-300">
+                Blog
               </a>
             </li>
-          
+            <li>
+              <a href="/franchise" className="hover:text-gray-700 dark:hover:text-gray-300">
+                Retailer Franchise
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -143,6 +148,43 @@ export default function Footer() {
               <img src="/footer-icon/x.png" className="w-5" />
             </a>
           </div>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {!expanded ? (
+            <div className="text-gray-700 dark:text-gray-300 text-sm">
+              <p>Welcome to QuickRun, where convenience meets speed.</p>
+              <button
+                onClick={() => setExpanded(true)}
+                className="mt-2 text-green-700 dark:text-green-400 font-medium underline"
+              >
+                Read more
+              </button>
+            </div>
+          ) : (
+            <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed space-y-4">
+              <p>
+                Welcome to QuickRun, where convenience meets speed. In today’s fast-paced world, we understand that your time is precious. That’s why we have built a platform that brings the entire supermarket experience directly to your fingertips. Whether you are restocking your kitchen or need an emergency medicine, QuickRun ensures that everything you need is delivered to your doorstep in record time.
+              </p>
+              <p>
+                Our extensive catalog is designed to cater to every aspect of your daily life. Dive into our Grocery &amp; Staples section, featuring premium quality pulses, grains, and the highly trusted range of Rajdhani Products. For your morning rituals, we provide farm-fresh Dairy, Bread, and Eggs, ensuring your breakfast is always healthy and delicious. Our Fruits &amp; Vegetables are handpicked and sourced daily to maintain peak freshness and nutritional value.
+              </p>
+              <p>
+                Beyond the kitchen, QuickRun is your partner in health and hygiene. Our Wellness &amp; Pharma category provides quick access to essential healthcare needs, while our Skin Care and Health Care range features top-tier brands to keep you looking and feeling your best. Maintain a spotless home with our high-performance Cleaning Essentials, and elevate your meals with our diverse collection of Sauces and Spreads. If you're looking for a quick bite, explore our Bakery and Biscuits or dive into our world of crunchy, flavorful Snacks for every mood.
+              </p>
+              <p>
+                At QuickRun, we are committed to quality, affordability, and unmatched delivery speed. Why settle for delays when you can have it now? Experience the future of smart shopping today with QuickRun—because you deserve the best, delivered fast. @3462129528862
+              </p>
+              <button
+                onClick={() => setExpanded(false)}
+                className="mt-2 text-green-700 dark:text-green-400 font-medium underline"
+              >
+                Read less
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

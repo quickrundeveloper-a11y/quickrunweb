@@ -654,7 +654,17 @@ export default function QRFGroupPage() {
               </div>
             </div>
 
-            {/* Highlight Section */}
+            <div className="highlight-section fade-in">
+              <h2>Blog</h2>
+              <p>Read detailed insights, announcements, and stories from the QRF and QuickRun teams.</p>
+              <a
+                href="/blog"
+                className="cta-button"
+              >
+                Visit Blog
+              </a>
+            </div>
+
             <div className="highlight-section fade-in">
               <h2>Save the Date</h2>
               <p><strong>Grand Investment Meet & International Business Conclave</strong></p>

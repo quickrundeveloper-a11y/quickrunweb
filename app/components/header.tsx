@@ -66,6 +66,57 @@ const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
 
 
+  function detectAndSetLocation() {
+    if (!navigator.geolocation) {
+      setLoadingLocation(false);
+      return;
+    }
+
+    setLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+
+        setCoords({ lat: latitude, lng: longitude });
+
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const place =
+              data?.address?.suburb ||
+              data?.address?.city ||
+              data?.address?.town ||
+              data?.address?.village ||
+              data?.display_name ||
+              "Unknown Location";
+
+            const full = data?.display_name || "";
+
+            localStorage.setItem(
+              "qr_saved_location",
+              JSON.stringify({ lat: latitude, lng: longitude, short: place, full })
+            );
+
+            setLocation(place);
+            setFullAddress(full);
+            setAddress({ short: place, full });
+            setHasLocation(true);
+          })
+          .catch(() => {})
+          .finally(() => {
+            setLoadingLocation(false);
+          });
+      },
+      () => {
+        console.warn("Unable to fetch location");
+        setLoadingLocation(false);
+      }
+    );
+  }
+
 
   useEffect(() => {
   if (pathname === "/") {
@@ -111,8 +162,9 @@ useEffect(() => {
     setLoadingLocation(false);
 
     console.log("📌 Loaded saved location:", loc);
+  } else {
+    detectAndSetLocation();
   }
-  setLoadingLocation(false);
 }, []);
 
 
@@ -560,48 +612,7 @@ useEffect(() => {
                 className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium"
                 onClick={() => {
                   localStorage.removeItem("qr_saved_location");
-                  setLoadingLocation(true);
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                      (pos) => {
-                        const { latitude, longitude } = pos.coords;
-
-                        setCoords({ lat: latitude, lng: longitude });  // ⭐ ADD THIS
-fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-  .then((res) => res.json())
-  .then((data) => {
-    const place =
-      data?.address?.suburb ||
-      data?.address?.city ||
-      data?.address?.town ||
-      data?.address?.village ||
-      data?.display_name ||
-      "Unknown Location";
-
-    const full = data?.display_name || "";
-
-    // ⭐ SAVE to localStorage
-    localStorage.setItem(
-      "qr_saved_location",
-      JSON.stringify({ lat: latitude, lng: longitude, short: place, full })
-    );
-
-    setLocation(place);
-    setFullAddress(full);
-    setHasLocation(true);
-
-    setShowAddressModal(false);
-    setLoadingLocation(false);
-  })
-
-                          .catch(() => {});
-                      },
-                      () => {
-                        console.warn("Unable to fetch location");
-                        setLoadingLocation(false);
-                      }
-                    );
-                  }
+                  detectAndSetLocation();
                 }}
               >
                 Detect my location
