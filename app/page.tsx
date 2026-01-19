@@ -2,15 +2,19 @@ import HomeClient from "./home/HomeClient";
 import Script from "next/script";
 
 export const metadata = {
-  title: "QuickRun Delivers Fresh Groceries & Daily Needs",
+  title: "QuickRun – Online Grocery & Food Delivery App",
   description:
-    "Quickrun Delivers Fresh Groceries And Daily Essentials To Your Doorstep Within Minutes. Enjoy Fast, Reliable, And Convenient Online Shopping Anytime You Need It.",
+    "QuickRun is the best online grocery & food delivery app. Order fresh vegetables, groceries & daily needs with free delivery, great offers and super-fast service.",
   keywords: [
-    "Online Grocery Delivery",
-    "Fresh Fruits and Vegetables",
-    "Daily Essentials Online",
-    "Quick Grocery Delivery",
-    "Buy Groceries Near Me",
+    "QuickRun",
+    "QuickRun App",
+    "Online Grocery Delivery Noida",
+    "Food Delivery Ghaziabad",
+    "Fresh Vegetables Online",
+    "QuickRun Delivery",
+    "Buy Daily Essentials Noida",
+    "Fast Grocery Delivery",
+    "Free Home Delivery Noida",
   ],
   alternates: {
     canonical: "https://www.quickrunfast.com/",

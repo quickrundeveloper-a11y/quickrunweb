@@ -17,12 +17,51 @@ type FirestoreBlogPost = {
   author?: string;
   image?: string;
   createdAt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  keywords?: string;
 };
 
 function FirestoreBlogArticle({ slug }: { slug: string }) {
   const [post, setPost] = useState<FirestoreBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    if (post) {
+      // Title: Prefer metaTitle, fallback to title
+      if (post.metaTitle) {
+        document.title = post.metaTitle;
+      } else {
+        document.title = `${post.title} | QuickRun Blog`;
+      }
+
+      // Description: Prefer metaDescription, fallback to description
+      const desc = post.metaDescription || post.description;
+      if (desc) {
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+          metaDesc = document.createElement("meta");
+          metaDesc.setAttribute("name", "description");
+          document.head.appendChild(metaDesc);
+        }
+        metaDesc.setAttribute("content", desc);
+      }
+
+      // Keywords: Prefer metaKeywords, fallback to keywords
+      const keys = post.metaKeywords || post.keywords;
+      if (keys) {
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (!metaKeywords) {
+          metaKeywords = document.createElement("meta");
+          metaKeywords.setAttribute("name", "keywords");
+          document.head.appendChild(metaKeywords);
+        }
+        metaKeywords.setAttribute("content", keys);
+      }
+    }
+  }, [post]);
 
   useEffect(() => {
     let isMounted = true;
@@ -65,6 +104,10 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
               author: data.author ?? "QuickRun Team",
               image: data.image,
               createdAt: createdAtLabel,
+              metaTitle: data.metaTitle,
+              metaDescription: data.metaDescription,
+              metaKeywords: data.metaKeywords,
+              keywords: data.keywords,
             });
           }
         } else if (isMounted) {
