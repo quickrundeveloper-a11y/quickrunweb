@@ -230,7 +230,11 @@ export default function BlogArticlePage({ params }: { params: BlogParams }) {
                 className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700"
               >
                 <div className="grid gap-3 md:gap-4 md:grid-cols-2">
-                  {(section.images || [section.image]).map((img: string, i: number) => (
+                  {(
+                    (section.images && section.images.length > 0)
+                      ? section.images
+                      : ('image' in section && section.image ? [section.image] : [])
+                  ).map((img: string, i: number) => (
                     <div key={i} className="w-full h-52 md:h-64 overflow-hidden">
                       <img
                         src={img}
