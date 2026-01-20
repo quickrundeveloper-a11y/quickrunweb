@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import { X } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
   const [post, setPost] = useState<FirestoreBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (post) {
@@ -135,7 +137,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
   if (loading) {
     return (
       <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
-        <div className="w-[94%] max-w-3xl mx-auto">
+        <div className="w-[94%] max-w-5xl mx-auto">
           <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
             Loading article...
           </p>
@@ -147,7 +149,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
   if (missing || !post) {
     return (
       <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
-        <div className="w-[94%] max-w-3xl mx-auto">
+        <div className="w-[94%] max-w-5xl mx-auto">
           <p className="text-gray-700 dark:text-gray-200 text-base md:text-lg mb-4">
             This article could not be found.
           </p>
@@ -163,71 +165,104 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
   }
 
   return (
-    <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
-      <div className="w-[94%] max-w-3xl mx-auto">
-        <header className="mb-8 md:mb-10">
-          <p className="text-xs font-semibold tracking-[0.25em] text-gray-500 dark:text-gray-400 mb-3 uppercase">
-            QuickRun Blog
-          </p>
-          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            {post.title}
-          </h1>
-          <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-4">
-            <span className="font-medium">
-              {post.author || "QuickRun Team"}
-            </span>{" "}
-            {post.createdAt && (
-              <>
-                <span className="mx-1">•</span>
-                <span>{post.createdAt}</span>
-              </>
-            )}
-          </div>
-          {post.description && (
-            <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
-              {post.description}
+    <>
+      <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
+        <div className="w-[94%] max-w-5xl mx-auto">
+          <header className="mb-8 md:mb-10">
+            <p className="text-xs font-semibold tracking-[0.25em] text-gray-500 dark:text-gray-400 mb-3 uppercase">
+              QuickRun Blog
             </p>
-          )}
-        </header>
-
-        <article className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
-          {post.image && (
-            <div className="w-full h-52 md:h-64 overflow-hidden">
-              <img
-                src={post.image}
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
+            <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              {post.title}
+            </h1>
+            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <span className="font-medium">
+                {post.author || "QuickRun Team"}
+              </span>{" "}
+              {post.createdAt && (
+                <>
+                  <span className="mx-1">•</span>
+                  <span>{post.createdAt}</span>
+                </>
+              )}
             </div>
-          )}
-          <div className="p-5 md:p-6 space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-            <ReactMarkdown
-              components={{
-                a: ({ node, ...props }) => (
-                  <a
-                    {...props}
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                ),
-              }}
-            >
-              {post.content}
-            </ReactMarkdown>
-          </div>
-        </article>
+            {post.description && (
+              <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
+                {post.description}
+              </p>
+            )}
+          </header>
 
-        <div className="mt-10">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-sm md:text-base font-medium text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            ← Back to blog
-          </Link>
+          <article className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+            {post.image && (
+              <div 
+                className="w-full h-52 md:h-96 overflow-hidden group cursor-pointer" 
+                onClick={() => setSelectedImage(post.image!)}
+              >
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            )}
+            <div className="p-5 md:p-8 space-y-4 text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a
+                      {...props}
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  ),
+                  img: ({ node, ...props }) => (
+                    <img
+                      {...props}
+                      className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => setSelectedImage(props.src as string)}
+                    />
+                  ),
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
+            </div>
+          </article>
+
+          <div className="mt-10">
+            <Link
+              href="/blog"
+              className="inline-flex items-center text-sm md:text-base font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              ← Back to blog
+            </Link>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+
+      {/* Lightbox */}
+      {selectedImage && (
+        <div 
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+        >
+            <button 
+                className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+                onClick={() => setSelectedImage(null)}
+            >
+                <X size={32} />
+            </button>
+            <img 
+                src={selectedImage} 
+                alt="Full screen view" 
+                className="max-w-full max-h-full object-contain"
+                onClick={(e) => e.stopPropagation()} 
+            />
+        </div>
+      )}
+    </>
   );
 }
 
