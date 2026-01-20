@@ -90,8 +90,9 @@ export default async function sitemap() {
      * 4️⃣ Blog Posts
      * ------------------------ */
     const blogRef = collection(db, "blog_posts");
-    const blogQ = query(blogRef, where("status", "==", "published"));
-    const blogSnap = await getDocs(blogQ);
+    // Removed status check to include all posts (or filter by published if field exists)
+    // For now, getting all posts to match website behavior
+    const blogSnap = await getDocs(blogRef);
 
     const blogs = blogSnap.docs.map((doc) => {
       const data = doc.data();
@@ -99,8 +100,11 @@ export default async function sitemap() {
       const ts = data.updated_at || data.created_at;
       const lastModified = ts && typeof ts.toDate === "function" ? ts.toDate() : new Date();
 
+      // Ensure slug exists, fallback to ID if missing
+      const slug = data.slug || doc.id;
+
       return {
-        url: `${baseUrl}/blog/${data.slug}`,
+        url: `${baseUrl}/blog/${slug}`,
         lastModified,
       };
     });

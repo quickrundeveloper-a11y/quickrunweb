@@ -22,9 +22,8 @@ export default function BlogPage() {
     const fetchPosts = async () => {
       try {
         const ref = collection(db, "blog_posts");
-        const q = query(ref, where("status", "==", "published"));
-
-        const snap = await getDocs(q);
+        // Removing status check to show all posts for now, as admin panel might not set it
+        const snap = await getDocs(ref);
 
         const firestorePosts: BlogCard[] = snap.docs.map((doc) => {
           const data: any = doc.data();
@@ -33,15 +32,18 @@ export default function BlogPage() {
             ? data.created_at.toDate()
             : null;
 
+          // Fallback to 'heading' if 'title' is missing
+          // Fallback to 'paragraph' if 'content'/'description' is missing
+          const title = data.title || data.heading || "QuickRun Blog";
           const contentSource: string =
-            data.description || data.content || "";
+            data.description || data.content || data.paragraph || "";
 
           const words = contentSource.split(/\s+/).filter(Boolean);
           const approxMinutes = Math.max(1, Math.round(words.length / 200));
 
           return {
             slug: data.slug ?? doc.id,
-            title: data.title ?? "QuickRun Blog",
+            title,
             author: data.author ?? "QuickRun Team",
             date: createdAt
               ? createdAt.toLocaleDateString("en-IN", {
@@ -63,7 +65,8 @@ export default function BlogPage() {
         if (firestorePosts.length > 0) {
           setPosts(firestorePosts);
         }
-      } catch {
+      } catch (err) {
+        console.error("Error fetching blog posts:", err);
         setPosts([]);
       }
     };
@@ -71,7 +74,7 @@ export default function BlogPage() {
     fetchPosts();
   }, []);
   return (
-    <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
+    <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-20 md:py-24">
       <div className="w-[94%] max-w-6xl mx-auto">
         <header className="mb-10 md:mb-14 text-center">
           <p className="text-xs font-semibold tracking-[0.25em] text-gray-500 dark:text-gray-400 mb-3 uppercase">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { X } from "lucide-react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 type BlogParams = {
@@ -23,6 +23,11 @@ type FirestoreBlogPost = {
   metaDescription?: string;
   metaKeywords?: string;
   keywords?: string;
+  sections?: {
+    heading?: string;
+    paragraph?: string;
+    image?: string;
+  }[];
 };
 
 function FirestoreBlogArticle({ slug }: { slug: string }) {
@@ -72,18 +77,36 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
     const fetchPost = async () => {
       try {
         const ref = collection(db, "blog_posts");
+        // Try fetching by slug first
         const q = query(
           ref,
-          where("slug", "==", slug),
-          where("status", "==", "published")
+          where("slug", "==", slug)
+          // Removed status check to allow viewing unpublished/draft posts if linked
         );
 
-        const snap = await getDocs(q);
+        let snap = await getDocs(q);
+        let data: any = null;
+        let docId = "";
 
         if (!snap.empty) {
-          const doc = snap.docs[0];
-          const data: any = doc.data();
+          const d = snap.docs[0];
+          data = d.data();
+          docId = d.id;
+        } else {
+          // If slug lookup failed, try looking up by ID (assuming slug might be an ID)
+          try {
+            const docRef = doc(db, "blog_posts", slug);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              data = docSnap.data();
+              docId = docSnap.id;
+            }
+          } catch (e) {
+            // Ignore error if slug is not a valid ID format
+          }
+        }
 
+        if (data) {
           const createdAt = data.created_at?.toDate
             ? data.created_at.toDate()
             : null;
@@ -96,27 +119,52 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
               })
             : undefined;
 
-          const content: string = data.content || data.description || "";
+          // Fallback to 'heading' if 'title' is missing
+          // Fallback to 'paragraph' if 'content'/'description' is missing
+          const title = data.title || data.heading || "QuickRun Blog";
+          const content: string =
+            data.content || data.paragraph || data.description || "";
+          
+          // Use default image if none provided
+          const image = data.image || "https://images.pexels.com/photos/4393665/pexels-photo-4393665.jpeg?auto=compress&cs=tinysrgb&w=1200";
+
+          // Parse additional sections
+          // Admin panel likely saves them as 'sections', 'additionalSections', or 'content_sections'
+          const rawSections = data.sections || data.additionalSections || data.additional_sections || [];
+          const sections = Array.isArray(rawSections) ? rawSections.map((s: any) => ({
+            heading: s.heading || s.title,
+            paragraph: s.paragraph || s.content || s.description,
+            image: s.image
+          })) : [];
+
+          console.log("Fetched blog post data:", { 
+            title, 
+            contentLength: content.length, 
+            hasImage: !!image,
+            sectionsCount: sections.length 
+          });
 
           if (isMounted) {
             setPost({
-              slug: data.slug ?? doc.id,
-              title: data.title ?? "QuickRun Blog",
+              slug: data.slug ?? docId,
+              title,
               content,
               description: data.description,
               author: data.author ?? "QuickRun Team",
-              image: data.image,
+              image: image,
               createdAt: createdAtLabel,
               metaTitle: data.metaTitle,
               metaDescription: data.metaDescription,
               metaKeywords: data.metaKeywords,
               keywords: data.keywords,
+              sections,
             });
           }
         } else if (isMounted) {
           setMissing(true);
         }
-      } catch {
+      } catch (err) {
+        console.error("Error fetching blog post:", err);
         if (isMounted) {
           setMissing(true);
         }
@@ -166,7 +214,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
 
   return (
     <>
-      <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-10 md:py-16">
+      <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-20 md:py-24">
         <div className="w-[94%] max-w-5xl mx-auto">
           <header className="mb-8 md:mb-10">
             <p className="text-xs font-semibold tracking-[0.25em] text-gray-500 dark:text-gray-400 mb-3 uppercase">
@@ -224,11 +272,53 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
                       onClick={() => setSelectedImage(props.src as string)}
                     />
                   ),
+                  h1: () => null,
                 }}
               >
                 {post.content}
               </ReactMarkdown>
             </div>
+
+            {/* Additional Sections */}
+            {post.sections && post.sections.length > 0 && (
+              <div className="p-5 md:p-8 pt-0 space-y-8">
+                {post.sections.map((section, index) => (
+                  <div key={index} className="space-y-3">
+                    {section.heading && (
+                      <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                        {section.heading}
+                      </h2>
+                    )}
+                    {section.paragraph && (
+                      <div className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                        <ReactMarkdown
+                          components={{
+                            a: ({ node, ...props }) => (
+                              <a
+                                {...props}
+                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              />
+                            ),
+                            img: ({ node, ...props }) => (
+                              <img
+                                {...props}
+                                className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => setSelectedImage(props.src as string)}
+                              />
+                            ),
+                            h1: () => null,
+                          }}
+                        >
+                          {section.paragraph}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </article>
 
           <div className="mt-10">
