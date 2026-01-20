@@ -212,6 +212,54 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
     );
   }
 
+  const markdownComponents: any = {
+    a: ({ node, ...props }: any) => (
+      <a
+        {...props}
+        className="text-blue-600 dark:text-blue-400 hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
+    ),
+    img: ({ node, ...props }: any) => (
+      <img
+        {...props}
+        className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity my-6"
+        onClick={() => setSelectedImage(props.src as string)}
+      />
+    ),
+    h1: ({ node, ...props }: any) => (
+      <h1 {...props} className="text-2xl md:text-3xl font-bold mt-8 mb-4 text-gray-900 dark:text-gray-100" />
+    ),
+    h2: ({ node, ...props }: any) => (
+      <h2 {...props} className="text-xl md:text-2xl font-semibold mt-6 mb-3 text-gray-900 dark:text-gray-100" />
+    ),
+    h3: ({ node, ...props }: any) => (
+      <h3 {...props} className="text-lg md:text-xl font-semibold mt-5 mb-2 text-gray-900 dark:text-gray-100" />
+    ),
+    h4: ({ node, ...props }: any) => (
+      <h4 {...props} className="text-base md:text-lg font-semibold mt-4 mb-2 text-gray-900 dark:text-gray-100" />
+    ),
+    h5: ({ node, ...props }: any) => (
+      <h5 {...props} className="text-sm md:text-base font-semibold mt-3 mb-1 text-gray-900 dark:text-gray-100" />
+    ),
+    h6: ({ node, ...props }: any) => (
+      <h6 {...props} className="text-xs md:text-sm font-semibold mt-3 mb-1 text-gray-900 dark:text-gray-100 uppercase tracking-wide" />
+    ),
+    ul: ({ node, ...props }: any) => (
+      <ul {...props} className="list-disc list-outside ml-6 my-4 space-y-1" />
+    ),
+    ol: ({ node, ...props }: any) => (
+      <ol {...props} className="list-decimal list-outside ml-6 my-4 space-y-1" />
+    ),
+    li: ({ node, ...props }: any) => (
+      <li {...props} className="pl-1" />
+    ),
+    blockquote: ({ node, ...props }: any) => (
+      <blockquote {...props} className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-1 my-4 italic text-gray-600 dark:text-gray-400" />
+    ),
+  };
+
   return (
     <>
       <main className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center py-20 md:py-24">
@@ -255,26 +303,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
               </div>
             )}
             <div className="p-5 md:p-8 space-y-4 text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              <ReactMarkdown
-                components={{
-                  a: ({ node, ...props }) => (
-                    <a
-                      {...props}
-                      className="text-blue-600 dark:text-blue-400 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  ),
-                  img: ({ node, ...props }) => (
-                    <img
-                      {...props}
-                      className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => setSelectedImage(props.src as string)}
-                    />
-                  ),
-                  h1: () => null,
-                }}
-              >
+              <ReactMarkdown components={markdownComponents}>
                 {post.content}
               </ReactMarkdown>
             </div>
@@ -291,26 +320,7 @@ function FirestoreBlogArticle({ slug }: { slug: string }) {
                     )}
                     {section.paragraph && (
                       <div className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                        <ReactMarkdown
-                          components={{
-                            a: ({ node, ...props }) => (
-                              <a
-                                {...props}
-                                className="text-blue-600 dark:text-blue-400 hover:underline"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              />
-                            ),
-                            img: ({ node, ...props }) => (
-                              <img
-                                {...props}
-                                className="w-full rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                                onClick={() => setSelectedImage(props.src as string)}
-                              />
-                            ),
-                            h1: () => null,
-                          }}
-                        >
+                        <ReactMarkdown components={markdownComponents}>
                           {section.paragraph}
                         </ReactMarkdown>
                       </div>
