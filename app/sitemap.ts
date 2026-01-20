@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { generateSlug } from "@/app/utils/generateSlug";
 import { getAllProducts } from "@/lib/getAllProducts";
 
@@ -76,6 +76,7 @@ export default async function sitemap() {
     const staticUrls = [
       "",
       "/",
+      "/blog",
       "/termsandcondition",
       "/shipping_policy",
       "/privacy",
@@ -86,9 +87,28 @@ export default async function sitemap() {
     }));
 
     /** ------------------------
-     * 4️⃣ Final Sitemap
+     * 4️⃣ Blog Posts
      * ------------------------ */
-    return [...staticUrls, ...categories, ...products];
+    const blogRef = collection(db, "blog_posts");
+    const blogQ = query(blogRef, where("status", "==", "published"));
+    const blogSnap = await getDocs(blogQ);
+
+    const blogs = blogSnap.docs.map((doc) => {
+      const data = doc.data();
+      // Use updated_at or created_at, fallback to now
+      const ts = data.updated_at || data.created_at;
+      const lastModified = ts && typeof ts.toDate === "function" ? ts.toDate() : new Date();
+
+      return {
+        url: `${baseUrl}/blog/${data.slug}`,
+        lastModified,
+      };
+    });
+
+    /** ------------------------
+     * 5️⃣ Final Sitemap
+     * ------------------------ */
+    return [...staticUrls, ...categories, ...products, ...blogs];
 
   } catch (err) {
     console.error("🔥 SITEMAP ERROR:", err);
