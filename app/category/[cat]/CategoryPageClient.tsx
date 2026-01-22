@@ -274,7 +274,7 @@ const tokens = tokenNorm(categoryName)
               )}
             </div>
 
-            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] text-gray-900 dark:text-gray-100">
+            <p className="mt-2 font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] text-gray-900 dark:text-gray-100">
               {item.title}
             </p>
 

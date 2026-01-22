@@ -449,7 +449,7 @@ async function sendRequest() {
               )}
             </div>
   
-            <p className="font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] leading-tight text-gray-900 dark:text-gray-100">
+            <p className="mt-2 font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] leading-tight text-gray-900 dark:text-gray-100">
               {item.title}
             </p>
   
@@ -590,7 +590,7 @@ function getCardState(item: any) {
         <div className="relative rounded-xl sm:rounded-2xl overflow-hidden">
 
           <img
-            src="/img/banner2.png"
+            src="/img/banner2.webp"
             className="w-full h-[160px] sm:h-[260px] md:h-[320px] lg:h-[430px] object-cover"
             alt="Banner"
           />

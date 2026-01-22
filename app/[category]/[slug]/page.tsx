@@ -118,12 +118,18 @@ export default async function ProductPage({ params }: any) {
   if (snap.exists()) {
     const data = snap.data();
     
+    // Process images to ensure they are valid, fully qualified URLs
+    const rawImages = Array.isArray(data.imageUrls) ? data.imageUrls : (typeof data.imageUrls === 'string' ? [data.imageUrls] : []);
+    const validImages = rawImages
+      .filter((url: any) => typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://')))
+      .map((url: string) => url.trim());
+
     // Generate JSON-LD schema
     const jsonLd = {
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": data.name,
-      "image": data.imageUrls || [],
+      "image": validImages.length > 0 ? validImages : ["https://www.quickrunfast.com/logo.png"],
       "description": data.keyInformation?.description || data.description || `Fresh ${data.name} from Quick Run Fast - Premium quality grocery products delivered to your doorstep`,
       "brand": {
         "@type": "Brand",
@@ -164,6 +170,10 @@ export default async function ProductPage({ params }: any) {
             "value": "0",
             "currency": "INR"
           },
+          "shippingDestination": {
+            "@type": "DefinedRegion",
+            "addressCountry": "IN"
+          },
           "deliveryTime": {
             "@type": "ShippingDeliveryTime",
             "handlingTime": {
@@ -174,11 +184,19 @@ export default async function ProductPage({ params }: any) {
             },
             "transitTime": {
               "@type": "QuantitativeValue",
-              "minValue": 1,
-              "maxValue": 2,
+              "minValue": 0,
+              "maxValue": 1,
               "unitCode": "DAY"
             }
           }
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "IN",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
         }
       },
       "aggregateRating": {

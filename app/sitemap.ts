@@ -1,18 +1,19 @@
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { generateSlug } from "@/app/utils/generateSlug";
 import { getAllProducts } from "@/lib/getAllProducts";
+import { MetadataRoute } from "next";
 
-export default async function sitemap() {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.quickrunfast.com";
 
   try {
     /** ------------------------
-     * 1️⃣ Categories (FIXED – NO undefined)
+     * 1️⃣ Categories
      * ------------------------ */
     const catSnap = await getDocs(collection(db, "categories"));
 
-    const categories = catSnap.docs.map((doc) => {
+    const categories: MetadataRoute.Sitemap = catSnap.docs.map((doc) => {
       const data = doc.data();
 
       const slug =
@@ -23,18 +24,24 @@ export default async function sitemap() {
           .replace(/[^a-z0-9\s-]/g, "")
           .replace(/\s+/g, "-");
 
+      // Try to find a timestamp, fallback to current date if not available
+      const ts = data.updatedAt || data.createdAt;
+      const lastModified = ts && typeof ts.toDate === "function" ? ts.toDate() : new Date();
+
       return {
         url: `${baseUrl}/category/${slug}`,
-        lastModified: new Date(),
+        lastModified,
+        changeFrequency: "daily",
+        priority: 0.8,
       };
     });
 
     /** ------------------------
-     * 2️⃣ Products (UNCHANGED – CORRECT)
+     * 2️⃣ Products
      * ------------------------ */
     const allProducts = await getAllProducts();
 
-    const products = allProducts
+    const products: MetadataRoute.Sitemap = allProducts
       .map((p: any) => {
         const raw = p.raw || {};
 
@@ -66,35 +73,39 @@ export default async function sitemap() {
         return {
           url: `${baseUrl}/${type}/${slug}`,
           lastModified,
+          changeFrequency: "daily",
+          priority: 0.9,
         };
       })
-      .filter(Boolean) as { url: string; lastModified: Date }[];
+      .filter(Boolean) as MetadataRoute.Sitemap;
 
     /** ------------------------
      * 3️⃣ Static Pages
      * ------------------------ */
-    const staticUrls = [
-      "",
-      "/",
-      "/blog",
-      "/termsandcondition",
-      "/shipping_policy",
-      "/privacy",
-      "/return_policy",
-    ].map((p) => ({
-      url: `${baseUrl}${p}`,
+    const staticRoutes = [
+      { path: "", priority: 1.0, changeFrequency: "daily" as const },
+      { path: "/", priority: 1.0, changeFrequency: "daily" as const },
+      { path: "/blog", priority: 0.7, changeFrequency: "weekly" as const },
+      { path: "/termsandcondition", priority: 0.5, changeFrequency: "monthly" as const },
+      { path: "/shipping_policy", priority: 0.5, changeFrequency: "monthly" as const },
+      { path: "/privacy", priority: 0.5, changeFrequency: "monthly" as const },
+      { path: "/return_policy", priority: 0.5, changeFrequency: "monthly" as const },
+    ];
+
+    const staticUrls: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
+      url: `${baseUrl}${route.path}`,
       lastModified: new Date(),
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
     }));
 
     /** ------------------------
      * 4️⃣ Blog Posts
      * ------------------------ */
     const blogRef = collection(db, "blog_posts");
-    // Removed status check to include all posts (or filter by published if field exists)
-    // For now, getting all posts to match website behavior
     const blogSnap = await getDocs(blogRef);
 
-    const blogs = blogSnap.docs.map((doc) => {
+    const blogs: MetadataRoute.Sitemap = blogSnap.docs.map((doc) => {
       const data = doc.data();
       // Use updated_at or created_at, fallback to now
       const ts = data.updated_at || data.created_at;
@@ -106,6 +117,8 @@ export default async function sitemap() {
       return {
         url: `${baseUrl}/blog/${slug}`,
         lastModified,
+        changeFrequency: "weekly",
+        priority: 0.7,
       };
     });
 
