@@ -1,5 +1,6 @@
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "@/lib/firebase";
+import Script from "next/script";
 import CategoryPageClient from "./CategoryPageClient";
 
 async function getCategory(categorySlug: string) {
@@ -78,31 +79,33 @@ async function getCategory(categorySlug: string) {
       console.log("No exact match, trying fuzzy matching...");
       
       const targetWords = target.split("-").filter(w => w.length > 2);
-      
-      snap.forEach((doc) => {
-        const d = doc.data();
-        const nameNorm = normalize(d.name || "");
+
+      if (targetWords.length > 0) {
+        snap.forEach((doc) => {
+          const d = doc.data();
+          const nameNorm = normalize(d.name || "");
+          
+          const nameWords = nameNorm.split("-").filter(w => w.length > 2);
+          
+          // Count matching words
+          const nameMatches = targetWords.filter(tw => 
+            nameWords.some(nw => nw.includes(tw) || tw.includes(nw))
+          ).length;
+          
+          // If more than half the words match, consider it a match
+          if (nameMatches > 0 && nameMatches >= Math.ceil(targetWords.length / 2)) {
+            fuzzyMatch = d;
+            console.log("✅ FUZZY MATCH FOUND:", {
+              name: d.name,
+              type: d.type,
+              nameMatches,
+              targetWords: targetWords.length
+            });
+          }
+        });
         
-        const nameWords = nameNorm.split("-").filter(w => w.length > 2);
-        
-        // Count matching words
-        const nameMatches = targetWords.filter(tw => 
-          nameWords.some(nw => nw.includes(tw) || tw.includes(nw))
-        ).length;
-        
-        // If more than half the words match, consider it a match
-        if (nameMatches >= Math.ceil(targetWords.length / 2)) {
-          fuzzyMatch = d;
-          console.log("✅ FUZZY MATCH FOUND:", {
-            name: d.name,
-            type: d.type,
-            nameMatches,
-            targetWords: targetWords.length
-          });
-        }
-      });
-      
-      found = fuzzyMatch;
+        found = fuzzyMatch;
+      }
     }
 
     console.log("Final result:", found ? {
@@ -187,5 +190,43 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params; // ⭐ NEXT.JS FIX
   const { cat } = resolvedParams;
 
-  return <CategoryPageClient catSlug={cat} />;
+  const data = await getCategory(cat);
+  
+  const categoryName = data?.name || cat.replace(/-/g, " ");
+  const formattedCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+
+  const breadcrumbItems = [
+     { label: formattedCategory, href: `/category/${cat}` }
+  ];
+
+  const breadcrumbSchemaJson = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://quickrunfast.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": formattedCategory,
+        "item": `https://quickrunfast.com/category/${cat}`
+      }
+    ]
+  };
+
+  return (
+    <>
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchemaJson) }}
+        strategy="beforeInteractive"
+      />
+      <CategoryPageClient catSlug={cat} breadcrumbItems={breadcrumbItems} />
+    </>
+  );
 }

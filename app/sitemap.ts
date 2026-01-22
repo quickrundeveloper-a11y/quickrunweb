@@ -1,6 +1,6 @@
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { generateSlug } from "@/app/utils/generateSlug";
+import { generateSlug, slugify } from "@/app/utils/generateSlug";
 import { getAllProducts } from "@/lib/getAllProducts";
 import { MetadataRoute } from "next";
 
@@ -55,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (!nameSource && !persistedSlug) return null;
 
         const type = (p.type || raw.type || "grocery").toLowerCase();
+        const category = (p.category || raw.category || type).toLowerCase();
 
         const slug =
           persistedSlug || generateSlug(String(nameSource), String(p.id));
@@ -71,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             : new Date();
 
         return {
-          url: `${baseUrl}/${type}/${slug}`,
+          url: `${baseUrl}/category/${slugify(category)}/${slug}`,
           lastModified,
           changeFrequency: "daily",
           priority: 0.9,

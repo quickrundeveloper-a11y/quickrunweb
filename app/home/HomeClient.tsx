@@ -206,6 +206,7 @@ function OrderAlertUI() {
         unit: p.unit ?? p.raw?.priceTiers?.[0]?.unit ?? "",
         discount: p.discount ?? p.raw?.priceTiers?.[0]?.percentOff ?? 0,
         type: p.type ?? p.raw?.type ?? "",
+        category: p.raw?.category ?? "",
         restaurentId: p.restaurentId ?? p.raw?.restaurentId ?? null,
         // quantityPerUnit should mirror the tier quantity (e.g. 200, 750)
         quantityPerUnit:
@@ -610,7 +611,7 @@ function getCardState(item: any) {
             {visibleItems.length > 0 && (() => {
               const first = visibleItems[0];
               const { blocked, overlayText } = getCardState(first);
-              const href = `/${first.type}/${generateSlug(first.title, first.id)}`;
+              const href = `/category/${slugify(first.category || first.type)}/${generateSlug(first.title, first.id)}`;
 
               if (blocked) {
                 return (
@@ -687,7 +688,7 @@ function getCardState(item: any) {
   }
 
   return (
-    <Link key={item.id} href={`/${item.type}/${slug}`} className="block">
+    <Link key={item.id} href={`/category/${slugify(item.category || item.type)}/${slug}`} className="block">
       {card}
     </Link>
   );

@@ -12,11 +12,14 @@ import { useLocationData } from "@/app/LocationProvider";
 import { useGyroTilt } from "@/app/utils/useGyroTilt";
 import { haversineDistanceKm } from "@/app/utils/distance";
 
+import Breadcrumbs, { BreadcrumbItem } from "@/app/components/Breadcrumbs";
+
 interface Props {
   catSlug: string;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
-export default function CategoryPageClient({ catSlug }: Props) {
+export default function CategoryPageClient({ catSlug, breadcrumbItems }: Props) {
   const categoryName = catSlug.replace(/-/g, " ");
   const router = useRouter();
 
@@ -437,6 +440,8 @@ const tokens = tokenNorm(categoryName)
     <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground w-full pb-16 pt-6 flex justify-center">
       <div className="w-full max-w-7xl px-3 sm:px-6">
 
+        {breadcrumbItems && <Breadcrumbs items={breadcrumbItems} />}
+
         <h2 className="text-xl sm:text-2xl font-bold mb-6 capitalize text-gray-900 dark:text-gray-100">
           {categoryName || "Category"}
         </h2>
@@ -486,7 +491,7 @@ const tokens = tokenNorm(categoryName)
             return (
               <Link
                 key={item.id}
-                href={`/${item.type}/${slug}`}
+                href={`/category/${slugify(item.category || item.type)}/${slug}`}
                 className="block"
               >
                 {card}

@@ -8,19 +8,22 @@ import {
   getDoc,
   collection,
   setDoc,
-  getDocs,
   serverTimestamp,
-  addDoc,
 } from "firebase/firestore";
 import React from "react";
 
 import { useLocationData } from "@/app/LocationProvider";
 import { haversineDistanceKm } from "@/app/utils/distance";
+import Breadcrumbs, { BreadcrumbItem } from "@/app/components/Breadcrumbs";
 
-export default function ProductPage() {
+interface ClientPageProps {
+  breadcrumbItems?: BreadcrumbItem[];
+}
+
+export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
   const params = useParams();
 
-  const category = Array.isArray(params?.category) ? params.category[0] : params?.category;
+  const category = Array.isArray(params?.cat) ? params.cat[0] : params?.cat;
   const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
 
   const id = slug?.split("-").pop();
@@ -28,6 +31,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<any>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [qty, setQty] = useState(0);
+  const [notFound, setNotFound] = useState(false);
 
   const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const [zoomActive, setZoomActive] = useState(false);
@@ -76,16 +80,38 @@ export default function ProductPage() {
   const [deliverable, setDeliverable] = useState<boolean | null>(null); // null = unknown/no location
 
   useEffect(() => {
-    if (!id || !category) return;
+    if (!id) return;
 
     (async function load() {
-      const ref = firestoreDoc(db, category, id);
-      const snap = await getDoc(ref);
+      try {
+        // Try finding the product in likely collections
+        const collectionsToCheck = ["grocery", "food"];
+        if (category) collectionsToCheck.push(category);
+        
+        let foundData = null;
 
-      if (snap.exists()) {
-        const data = snap.data();
-        setProduct(data);
-        setMainImage(data.imageUrls?.[0] || "");
+        for (const colName of collectionsToCheck) {
+          try {
+            const ref = firestoreDoc(db, colName, id);
+            const snap = await getDoc(ref);
+            if (snap.exists()) {
+              foundData = snap.data();
+              break; 
+            }
+          } catch (e) {
+            // Ignore error for missing collections
+          }
+        }
+
+        if (foundData) {
+          setProduct(foundData);
+          setMainImage(foundData.imageUrls?.[0] || "");
+        } else {
+          setNotFound(true);
+        }
+      } catch (err) {
+        console.error("Error loading product:", err);
+        setNotFound(true);
       }
     })();
   }, [id, category]);
@@ -157,24 +183,7 @@ export default function ProductPage() {
   }, [product?.restaurentId, hasLocation, userLat, userLng]);
 
   // ⭐ REQUEST EXPANSION
-  async function sendRequest() {
-    if (!userLat || !userLng) return;
-
-    try {
-      await addDoc(collection(db, "requestedLocations"), {
-        address: `Product Page Request for ${product?.name || ""}`,
-        lat: userLat,
-        lng: userLng,
-        timestamp: serverTimestamp(),
-      });
-
-      setSnack("Request Sent Successfully!");
-      setTimeout(() => setSnack(""), 2500);
-    } catch {
-      setSnack("Failed To Send Request!");
-      setTimeout(() => setSnack(""), 2500);
-    }
-  }
+  // Function removed as it was unused
 
   const overlayMessage = !hasLocation
     ? "Select location to order"
@@ -189,6 +198,20 @@ export default function ProductPage() {
     : "";
 
   const interactionBlocked = Boolean(overlayMessage);
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-10 text-center">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">Product Not Found</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          We couldn't find the product you're looking for. It might have been removed or the link is incorrect.
+        </p>
+        <a href="/" className="px-6 py-3 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition">
+          Go Home
+        </a>
+      </div>
+    );
+  }
 
   if (!product)
     return <div className="p-10 text-xl text-gray-900 dark:text-gray-100">Loading...</div>;
@@ -207,19 +230,16 @@ export default function ProductPage() {
     setZoomPos({ x, y });
   }
 
-  // Generate full product URL for schema
-  const productUrl = `https://www.quickrunfast.com/${category}/${slug}`;
-
   const tier = product.priceTiers?.[selectedTierIndex] ?? {};
   const price = tier.price ?? 0;
   const mrp = tier.mrp ?? null;
   const discount = tier.percentOff ?? null;
-  // quantityPerUnit mirrors the tier quantity (e.g. 200, 750)
-  const quantityPerUnit = tier.quantity ?? null;
 
   return (
     <>
     <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground pb-20 px-4 md:px-20">
+      
+      {breadcrumbItems && <Breadcrumbs items={breadcrumbItems} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-30 mt-10">
 

@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  turbopack: {
-    root: __dirname, // Stops the wrong Downloads folder detection
-  },
+  // turbopack option removed as it is not supported in next.config.js for this version
   async redirects() {
     return [
       {

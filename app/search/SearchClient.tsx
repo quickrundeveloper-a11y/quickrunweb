@@ -5,7 +5,7 @@ import { getFirestore, collection, getDocs, addDoc, serverTimestamp, setDoc, doc
 import { app } from "@/lib/firebase";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { generateSlug } from "@/app/utils/generateSlug";
+import { generateSlug, slugify } from "@/app/utils/generateSlug";
 import { useLocationData } from "@/app/LocationProvider";
 import { useGyroTilt } from "@/app/utils/useGyroTilt";
 import { haversineDistanceKm } from "@/app/utils/distance";
@@ -468,7 +468,7 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
                 }
 
                 return (
-                  <Link href={`/${item.type}/${slug}`} key={item.id} className="block relative">
+                  <Link href={`/category/${slugify(item.category || item.type)}/${slug}`} key={item.id} className="block relative">
                     {content}
                   </Link>
                 );
@@ -514,7 +514,7 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
               return (
                 <Link
                   key={item.id}
-                  href={`/${item.type}/${slug}`}
+                  href={`/category/${slugify(item.category || item.type)}/${slug}`}
                   className="block"
                 >
                   {card}
