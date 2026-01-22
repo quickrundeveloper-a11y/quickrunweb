@@ -47,11 +47,11 @@ export async function generateMetadata({ params }: any) {
   const canonicalUrl = `https://www.quickrunfast.com/category/${category}/${slug}`;
 
   return {
-    title: `${data.name} - Quick Run Fast`,
+    title: `${data.name} - QuickRun`,
     description:
       data.keyInformation?.description ||
       data.description ||
-      `Buy ${data.name} online from Quick Run Fast`,
+      `Buy ${data.name} online from QuickRun`,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: any) {
           ]
         : [],
       type: "website",
-      siteName: "Quick Run Fast",
+      siteName: "QuickRun",
     },
     twitter: {
       card: "summary_large_image",

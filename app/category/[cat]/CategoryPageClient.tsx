@@ -5,7 +5,7 @@ import { slugify, generateSlug } from "@/app/utils/generateSlug";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, serverTimestamp, setDoc, doc } from "firebase/firestore";
 import { app } from "@/lib/firebase";
 
 import { useLocationData } from "@/app/LocationProvider";
@@ -13,6 +13,7 @@ import { useGyroTilt } from "@/app/utils/useGyroTilt";
 import { haversineDistanceKm } from "@/app/utils/distance";
 
 import Breadcrumbs, { BreadcrumbItem } from "@/app/components/Breadcrumbs";
+import ShimmerImage from "@/app/components/ShimmerImage";
 
 interface Props {
   catSlug: string;
@@ -96,25 +97,7 @@ useEffect(() => {
 
 
 
-  // ------------------ REQUEST BUTTON FUNCTION ------------------
-  async function sendRequest(fullAddress: string) {
-    if (!userLat || !userLng) return;
 
-    try {
-      await addDoc(collection(getFirestore(app), "requestedLocations"), {
-        address: fullAddress,
-        lat: userLat,
-        lng: userLng,
-        timestamp: serverTimestamp(),
-      });
-
-      setSnack("Request Sent Successfully!");
-      setTimeout(() => setSnack(""), 2500);
-    } catch (err) {
-      setSnack("Failed To Send Request!");
-      setTimeout(() => setSnack(""), 2500);
-    }
-  }
 
   // ------------------ LOAD PRODUCTS ------------------
 
@@ -247,7 +230,7 @@ const tokens = tokenNorm(categoryName)
         <div className="border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition cursor-pointer p-3 flex flex-col justify-between bg-white dark:bg-gray-800 relative">
           <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
-              <img
+              <ShimmerImage
                 src={item.image}
                 className="w-full h-32 sm:h-36 object-contain bg-white rounded-lg"
               />

@@ -2,6 +2,7 @@
 
 import { slugify, generateSlug } from "@/app/utils/generateSlug";
 import { db } from "@/lib/firebase";
+import ShimmerImage from "@/app/components/ShimmerImage";
 
 import { onSnapshot } from "firebase/firestore";
 import { useMemo, useState, useRef } from "react";
@@ -10,7 +11,6 @@ import { useMemo, useState, useRef } from "react";
 import {
   collection,
   getDocs,
-  addDoc,
   serverTimestamp
 } from "firebase/firestore";
 
@@ -35,7 +35,7 @@ export default function HomeClient() {
 
 
   // LOCATION FROM CONTEXT
-  const { coords, address, hasLocation } = useLocationData();   // ⭐ ADDRESS ADDED
+  const { coords, hasLocation } = useLocationData();   // ⭐ ADDRESS ADDED
   const userLat = coords?.lat;
   const userLng = coords?.lng;
 
@@ -306,23 +306,7 @@ React.useEffect(() => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ⭐⭐⭐ ADD FIRESTORE SAVE REQUEST
-async function sendRequest() {
-  try {
-    await addDoc(collection(db, "requestedLocations"), {
-      address: address.full ?? "",
-      lat: userLat,
-      lng: userLng,
-      timestamp: serverTimestamp(),
-    });
 
-    setSnack("Request Sent Successfully!");
-    setTimeout(() => setSnack(""), 2500);
-  } catch (err) {
-    setSnack("Failed To Send Request!");
-    setTimeout(() => setSnack(""), 2500);
-  }
-}
 
   // Compute per-card gating state (location + shop status) and update quantities
   async function changeQuantity(
@@ -423,7 +407,7 @@ async function sendRequest() {
 
           <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
-              <img
+              <ShimmerImage
                 src={item.image}
                 className="w-full h-32 sm:h-36 object-contain bg-white rounded-lg"
               />

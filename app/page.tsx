@@ -19,6 +19,12 @@ export const metadata = {
   alternates: {
     canonical: "https://www.quickrunfast.com/",
   },
+  openGraph: {
+    siteName: "QuickRun",
+    title: "QuickRun – Online Grocery & Food Delivery App",
+    description: "Order fresh vegetables, groceries & daily needs with free delivery, great offers and super-fast service.",
+    type: "website",
+  },
 };
 
 export default function Page() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, serverTimestamp, setDoc, doc } from "firebase/firestore";
 import { app } from "@/lib/firebase";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -11,6 +11,7 @@ import { useGyroTilt } from "@/app/utils/useGyroTilt";
 import { haversineDistanceKm } from "@/app/utils/distance";
 
 import Link from "next/link";
+import ShimmerImage from "@/app/components/ShimmerImage";
 
 export default function SearchClient() {
   const router = useRouter();
@@ -40,25 +41,7 @@ export default function SearchClient() {
   const userLat = coords?.lat;
   const userLng = coords?.lng;
 
-  // ⭐ Send Request (store in Firestore)
-  async function sendRequest() {
-    if (!userLat || !userLng) return;
 
-    try {
-      await addDoc(collection(getFirestore(app), "requestedLocations"), {
-        address: "Request from search page",
-        lat: userLat,
-        lng: userLng,
-        timestamp: serverTimestamp(),
-      });
-
-      setSnack("Request Sent Successfully!");
-      setTimeout(() => setSnack(""), 2500);
-    } catch {
-      setSnack("Failed To Send Request!");
-      setTimeout(() => setSnack(""), 2500);
-    }
-  }
 
   // -----------------------------------------------------
 
@@ -262,7 +245,7 @@ export default function SearchClient() {
         <div className="border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition p-3 flex flex-col bg-white dark:bg-gray-800 relative h-full">
           <div className="flex flex-col items-start gap-2">
             <div className="relative w-full pb-3">
-              <img
+              <ShimmerImage
                 src={item.image}
                 className="w-full h-32 sm:h-36 object-contain bg-white dark:bg-gray-100 rounded-lg"
               />
@@ -433,7 +416,7 @@ if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userL
 
                 const content = (
                   <div className="flex items-center gap-4 bg-white dark:bg-gray-800 px-5 py-3 relative rounded-lg border border-gray-100 dark:border-gray-700">
-                    <img src={item.image} className="w-8 h-8 object-contain" />
+                    <ShimmerImage src={item.image} className="w-8 h-8 object-contain" />
                     <span className="text-gray-900 dark:text-gray-100 text-[16px] font-medium">{item.name}</span>
                     <button
                       onClick={(e) => changeQuantity(item, 1, e)}

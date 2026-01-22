@@ -15,6 +15,7 @@ import React from "react";
 import { useLocationData } from "@/app/LocationProvider";
 import { haversineDistanceKm } from "@/app/utils/distance";
 import Breadcrumbs, { BreadcrumbItem } from "@/app/components/Breadcrumbs";
+import ShimmerImage from "@/app/components/ShimmerImage";
 
 interface ClientPageProps {
   breadcrumbItems?: BreadcrumbItem[];
@@ -253,7 +254,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
     className="w-full aspect-square rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden relative"
     style={{ cursor: "zoom-in" }}
   >
-    <img src={mainImage || ""} className="w-full h-full object-contain" />
+    <ShimmerImage src={mainImage || ""} className="w-full h-full object-contain" />
   </div>
 
 
@@ -272,7 +273,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
 
           <div className="flex flex-wrap gap-4 mt-4">
             {product.imageUrls?.map((img: string, i: number) => (
-              <img
+              <ShimmerImage
                 key={i}
                 onClick={() => setMainImage(img)}
                 src={img}

@@ -9,13 +9,34 @@ import Script from "next/script";
 
 
 export const metadata = {
+  title: {
+    default: "QuickRun",
+    template: "%s | QuickRun",
+  },
+  applicationName: "QuickRun",
+  description: "QuickRun is Noida’s fastest online shopping and delivery platform offering groceries, electronics, daily essentials and more with instant delivery.",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://www.quickrunfast.com",
+    siteName: "QuickRun",
+    title: "QuickRun – Instant Grocery & Food Delivery",
+    description: "Order fresh groceries, food, and daily essentials with QuickRun. Fast delivery in Noida & Ghaziabad.",
+    images: [
+      {
+        url: "https://www.quickrunfast.com/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "QuickRun Logo",
+      },
+    ],
+  },
   other: {
     "google-site-verification": "CQy0QZoa95ovFQfnyJHPs6c4Pbd0VXuR6Uvs5X2-09s",
   },
-    icons: {
+  icons: {
     icon: "/favicon.ico?v=5",
   },
-
 };
 
 const lexend = Lexend({

@@ -161,6 +161,11 @@ export async function generateMetadata(props: any) {
       title: data?.title || fallbackTitle,
       description: data?.description || fallbackDescription,
       keywords: data?.keywords || fallbackKeywords,
+      openGraph: {
+        siteName: "QuickRun",
+        title: data?.title || fallbackTitle,
+        description: data?.description || fallbackDescription,
+      },
     };
 
     console.log("Final metadata:", metadata);
