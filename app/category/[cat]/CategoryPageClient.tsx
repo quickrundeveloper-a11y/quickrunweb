@@ -156,10 +156,14 @@ const tokens = tokenNorm(categoryName)
           const d = doc.data();
           const tier = Array.isArray(d.priceTiers) ? d.priceTiers[0] : null;
 
+          const image = d.imageSlug 
+            ? `/images/${type}/${d.imageSlug}` 
+            : (d.imageUrls?.[0] || "/placeholder.png");
+
           return {
             id: doc.id,
             title: d.name || "Product",
-            image: d.imageUrls?.[0] || "/placeholder.png",
+            image: image,
             price: tier?.price ?? d.price ?? 0,
             mrp: tier?.mrp ?? 0,
             quantity: tier?.quantity ?? "",

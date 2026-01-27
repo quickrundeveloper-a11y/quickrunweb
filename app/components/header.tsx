@@ -30,7 +30,7 @@ import MenuSheet from "./MenuSheet";
 export default function Header() {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("Select location");
-  const [loadingLocation, setLoadingLocation] = useState(false);
+  // const [loadingLocation, setLoadingLocation] = useState(false); // Moved to context
   const [fullAddress, setFullAddress] = useState("");
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,7 +52,17 @@ const [searchResults, setSearchResults] = useState<any[]>([]);
 const [searchLoading, setSearchLoading] = useState(false);
 
 //location condition
-const { setCoords, setAddress, hasLocation, setHasLocation } = useLocationData();
+  const { setCoords, setAddress, hasLocation, setHasLocation, detectAndSetLocation, loadingLocation, address } = useLocationData();
+
+
+  useEffect(() => {
+    if (address?.short) {
+      setLocation(address.short);
+    }
+    if (address?.full) {
+      setFullAddress(address.full);
+    }
+  }, [address]);
 
 
 const pathname = usePathname();
@@ -66,56 +76,7 @@ const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
 
 
-  function detectAndSetLocation() {
-    if (!navigator.geolocation) {
-      setLoadingLocation(false);
-      return;
-    }
-
-    setLoadingLocation(true);
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-
-        setCoords({ lat: latitude, lng: longitude });
-
-        fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            const place =
-              data?.address?.suburb ||
-              data?.address?.city ||
-              data?.address?.town ||
-              data?.address?.village ||
-              data?.display_name ||
-              "Unknown Location";
-
-            const full = data?.display_name || "";
-
-            localStorage.setItem(
-              "qr_saved_location",
-              JSON.stringify({ lat: latitude, lng: longitude, short: place, full })
-            );
-
-            setLocation(place);
-            setFullAddress(full);
-            setAddress({ short: place, full });
-            setHasLocation(true);
-          })
-          .catch(() => {})
-          .finally(() => {
-            setLoadingLocation(false);
-          });
-      },
-      () => {
-        console.warn("Unable to fetch location");
-        setLoadingLocation(false);
-      }
-    );
-  }
+  // detectAndSetLocation moved to LocationProvider
 
 
   useEffect(() => {
@@ -159,11 +120,11 @@ useEffect(() => {
     setFullAddress(loc.full);
     setAddress({ short: loc.short, full: loc.full });
     setHasLocation(Boolean(loc.lat && loc.lng));
-    setLoadingLocation(false);
+    // setLoadingLocation(false); // Removed
 
     console.log("📌 Loaded saved location:", loc);
   } else {
-    detectAndSetLocation();
+    // detectAndSetLocation(); // ❌ REMOVED: Do not auto-detect on load
   }
 }, []);
 

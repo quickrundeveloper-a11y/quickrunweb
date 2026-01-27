@@ -157,6 +157,11 @@ export async function generateMetadata(props: any) {
     const fallbackDescription = `Shop for ${categoryDisplayName} online with QuickRun. Get high-quality products delivered fast to your doorstep with guaranteed freshness and reliability.`;
     const fallbackKeywords = `${categoryDisplayName} online, buy ${categoryDisplayName}, ${categoryDisplayName} delivery, online ${categoryDisplayName} shopping, fast ${categoryDisplayName} delivery, QuickRun ${categoryDisplayName}`;
 
+    // Determine image URL (SEO-friendly slug or direct URL or default)
+    const imageUrl = data?.imageSlug 
+      ? `https://www.quickrunfast.com/images/categories/${data.imageSlug}` 
+      : (data?.image || "https://www.quickrunfast.com/logo.png");
+
     const metadata = {
       title: data?.title || fallbackTitle,
       description: data?.description || fallbackDescription,
@@ -165,6 +170,14 @@ export async function generateMetadata(props: any) {
         siteName: "QuickRun",
         title: data?.title || fallbackTitle,
         description: data?.description || fallbackDescription,
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: data?.name || capitalizedName,
+          },
+        ],
       },
     };
 

@@ -93,7 +93,7 @@ useEffect(() => {
   // INIT MAP
   // --------------------------
   const initMap = (lat: number, lng: number) => {
-    if (!window.google) return;
+    if (typeof window === "undefined" || !window.google) return;
 
     if (!mapRef.current) {
       mapRef.current = new window.google.maps.Map(

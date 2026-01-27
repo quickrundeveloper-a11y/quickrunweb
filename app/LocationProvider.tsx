@@ -18,6 +18,8 @@ interface LocationContextType {
   setAddress: (value: AddressType) => void;
   hasLocation: boolean;
   setHasLocation: (value: boolean) => void;
+  loadingLocation: boolean;
+  detectAndSetLocation: () => void;
 }
 
 const LocationContext = createContext<LocationContextType | null>(null);
@@ -34,6 +36,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   });
 
   const [hasLocation, setHasLocation] = useState(false);
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   // LOAD SAVED LOCATION ONCE
   useEffect(() => {
@@ -55,6 +58,55 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     }
   }, [coords.lat, coords.lng]);
 
+  function detectAndSetLocation() {
+    if (!navigator.geolocation) {
+      setLoadingLocation(false);
+      return;
+    }
+
+    setLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+
+        setCoords({ lat: latitude, lng: longitude });
+
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const place =
+              data?.address?.suburb ||
+              data?.address?.city ||
+              data?.address?.town ||
+              data?.address?.village ||
+              data?.display_name ||
+              "Unknown Location";
+
+            const full = data?.display_name || "";
+
+            localStorage.setItem(
+              "qr_saved_location",
+              JSON.stringify({ lat: latitude, lng: longitude, short: place, full })
+            );
+
+            setAddress({ short: place, full });
+            setHasLocation(true);
+          })
+          .catch(() => {})
+          .finally(() => {
+            setLoadingLocation(false);
+          });
+      },
+      () => {
+        console.warn("Unable to fetch location");
+        setLoadingLocation(false);
+      }
+    );
+  }
+
   return (
     <LocationContext.Provider
       value={{
@@ -64,6 +116,8 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         setAddress,
         hasLocation,
         setHasLocation,
+        loadingLocation,
+        detectAndSetLocation,
       }}
     >
       {children}

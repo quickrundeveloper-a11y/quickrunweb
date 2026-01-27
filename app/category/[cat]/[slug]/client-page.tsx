@@ -90,6 +90,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
         if (category) collectionsToCheck.push(category);
         
         let foundData = null;
+        let foundCollection = "";
 
         for (const colName of collectionsToCheck) {
           try {
@@ -97,6 +98,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
             const snap = await getDoc(ref);
             if (snap.exists()) {
               foundData = snap.data();
+              foundCollection = colName;
               break; 
             }
           } catch (e) {
@@ -106,7 +108,10 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
 
         if (foundData) {
           setProduct(foundData);
-          setMainImage(foundData.imageUrls?.[0] || "");
+          const image = foundData.imageSlug
+            ? `/images/${foundCollection}/${foundData.imageSlug}`
+            : (foundData.imageUrls?.[0] || "");
+          setMainImage(image);
         } else {
           setNotFound(true);
         }

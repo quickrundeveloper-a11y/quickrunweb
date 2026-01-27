@@ -35,7 +35,7 @@ export default function HomeClient() {
 
 
   // LOCATION FROM CONTEXT
-  const { coords, hasLocation } = useLocationData();   // ⭐ ADDRESS ADDED
+  const { coords, hasLocation, detectAndSetLocation } = useLocationData();   // ⭐ ADDRESS ADDED
   const userLat = coords?.lat;
   const userLng = coords?.lng;
 
@@ -44,6 +44,7 @@ export default function HomeClient() {
 
   // SCROLL TO RECOMMENDED SECTION
   const scrollToRecommended = () => {
+    if (typeof window === "undefined") return;
     const element = document.getElementById('recommended-section');
     if (element) {
       const headerHeight = window.innerWidth >= 640 ? 110 : 165; // Desktop: 106px, Mobile: 120px (more generous)
@@ -255,7 +256,14 @@ React.useEffect(() => {
     async function loadCategories() {
       const snap = await getDocs(collection(db, "categories"));
       setCategories(
-        snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+        snap.docs.map((d) => {
+          const data = d.data();
+          const image = data.imageSlug 
+            ? `/images/categories/${data.imageSlug}` 
+            : (data.image || "");
+            
+          return { id: d.id, ...data, image };
+        })
       );
     }
     loadCategories();
@@ -317,6 +325,12 @@ React.useEffect(() => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
+    }
+
+    // ⭐ AUTO-DETECT LOCATION IF MISSING
+    if (!hasLocation) {
+      detectAndSetLocation();
+      return;
     }
 
     const currentQty = quantities[item.id] || 0;
@@ -434,9 +448,9 @@ React.useEffect(() => {
               )}
             </div>
   
-            <p className="mt-2 font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] leading-tight text-gray-900 dark:text-gray-100">
-              {item.title}
-            </p>
+            <p className="mt-2 font-semibold text-[11px] sm:text-xs line-clamp-2 h-[32px] text-gray-900 dark:text-gray-100">
+            {item.title}
+          </p>
   
             <p className="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs -mt-1">
               {item.quantity} {item.unit}
@@ -508,7 +522,7 @@ function getCardState(item: any) {
   const blocked =
     shopClosed ||
     !hasShop ||
-    !hasUserLocation ||
+    // !hasUserLocation ||  // ❌ ALLOW BROWSING WITHOUT LOCATION
     !shopHasLocation ||
     isOutOfRange ||
     isOutOfStock;
@@ -526,7 +540,7 @@ function getCardState(item: any) {
 
 
       {/* CATEGORY STRIP */}
-      <div className="px-2 sm:px-6 md:px-10 mt-4 sm:mt-6">
+      <div className="px-2 sm:px-6 md:px-10 mt-12 sm:mt-6">
         <div className="relative">
           <button
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 dark:bg-gray-700 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
@@ -553,7 +567,13 @@ function getCardState(item: any) {
               {categories.map((cat, i) => (
                 <div
                   key={i}
-                  onClick={() => router.push(`/category/${slugify(cat.name)}`)}
+                  onClick={() => {
+                    if (!hasLocation) {
+                      detectAndSetLocation();
+                      return;
+                    }
+                    router.push(`/category/${slugify(cat.name)}`);
+                  }}
                   className="text-center cursor-pointer flex flex-col items-center min-w-[80px] sm:min-w-[90px] md:min-w-[110px]"
                 >
                   <img
@@ -672,7 +692,17 @@ function getCardState(item: any) {
   }
 
   return (
-    <Link key={item.id} href={`/category/${slugify(item.category || item.type)}/${slug}`} className="block">
+    <Link 
+      key={item.id} 
+      href={`/category/${slugify(item.category || item.type)}/${slug}`} 
+      className="block"
+      onClick={(e) => {
+        if (!hasLocation) {
+          e.preventDefault();
+          detectAndSetLocation();
+        }
+      }}
+    >
       {card}
     </Link>
   );

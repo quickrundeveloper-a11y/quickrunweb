@@ -45,14 +45,18 @@ export default function SearchClient() {
 
   // -----------------------------------------------------
 
-  const extractData = (doc: any) => {
+  const extractData = (doc: any, collectionName: string) => {
     const d = doc.data();
     const tier = Array.isArray(d.priceTiers) ? d.priceTiers[0] : null;
+
+    const image = d.imageSlug
+      ? `/images/${collectionName}/${d.imageSlug}`
+      : d.imageUrls?.[0] || "";
 
     return {
       id: doc.id,
       name: d.name || "",
-      image: d.imageUrls?.[0] || "",
+      image: image,
       price: tier?.price ?? d.price ?? 0,
       mrp: tier?.mrp ?? d.mrp ?? 0,
       quantity: tier?.quantity ?? "",
@@ -123,8 +127,8 @@ export default function SearchClient() {
         // ⭐ Extract all products
         const rawProducts: any[] = [];
 
-        foodSnap.forEach((doc) => rawProducts.push(extractData(doc)));
-        grocerySnap.forEach((doc) => rawProducts.push(extractData(doc)));
+        foodSnap.forEach((doc) => rawProducts.push(extractData(doc, "food")));
+        grocerySnap.forEach((doc) => rawProducts.push(extractData(doc, "grocery")));
 
         // ⭐ Search Filter
         const filtered = rawProducts.filter((item) => {

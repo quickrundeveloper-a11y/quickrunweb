@@ -197,6 +197,7 @@ export default function BlinkitOrderTracking() {
 
   // ⭐ Route trimming from driver's projected point forward
   const trimRouteFromDriverPosition = (routePath: any[], driverPosition: any): any[] => {
+    if (typeof window === "undefined" || !window.google) return routePath;
     if (!routePath || routePath.length === 0) {
       return [];
     }
@@ -534,6 +535,8 @@ export default function BlinkitOrderTracking() {
 
   // ⭐ Enhanced real-time driver location tracking with throttling
   const updateDriverOnExistingRoute = async (driverLat: number, driverLng: number) => {
+    if (typeof window === "undefined" || !window.google) return;
+
     if (!routePathRef.current || routePathRef.current.length === 0) {
       console.log('No existing route to update driver position on');
       return;
