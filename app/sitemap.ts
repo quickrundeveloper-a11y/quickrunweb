@@ -4,6 +4,8 @@ import { generateSlug, slugify } from "@/app/utils/generateSlug";
 import { getAllProducts } from "@/lib/getAllProducts";
 import { MetadataRoute } from "next";
 
+export const revalidate = 0;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.quickrunfast.com";
 
