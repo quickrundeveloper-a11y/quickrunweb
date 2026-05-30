@@ -18,77 +18,20 @@ import Link from "next/link";
 import { getAllProducts } from "@/lib/getAllProducts";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { Droplets, Sparkles, Leaf, ShieldCheck, Pipette, User, Hand, SunMoon, Star, Camera, Video, Send, Loader2, MessageSquare, Plus, ChevronRight, Quote, X } from "lucide-react";
 
 import { useLocationData } from "@/app/LocationProvider";
 import { haversineDistanceKm } from "@/app/utils/distance";
 import { useGyroTilt } from "@/app/utils/useGyroTilt";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, addDoc, query, orderBy } from "firebase/firestore";
+import { motion, AnimatePresence } from "framer-motion";
 
 type OrderType = {
   id: string;
   [key: string]: any;
 };
 
-export default function HomeClient() {
-  const router = useRouter();
-  // console.log("UID FROM LS =", localStorage.getItem("uid"));
-
-
-  // LOCATION FROM CONTEXT
-  const { coords, hasLocation, detectAndSetLocation } = useLocationData();   // ⭐ ADDRESS ADDED
-  const userLat = coords?.lat;
-  const userLng = coords?.lng;
-
-  // SNACKBAR
-  const [snack, setSnack] = React.useState("");
-
-  // SCROLL TO RECOMMENDED SECTION
-  const scrollToRecommended = () => {
-    if (typeof window === "undefined") return;
-    const element = document.getElementById('recommended-section');
-    if (element) {
-      const headerHeight = window.innerWidth >= 640 ? 110 : 165; // Desktop: 106px, Mobile: 120px (more generous)
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - headerHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  // LAZY LOADING STATES
-  const [allItems, setAllItems] = React.useState<any[]>([]);
-  const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
-  const [visibleItems, setVisibleItems] = React.useState<any[]>([]);
-  const [batch, setBatch] = React.useState(1);
-  const ITEMS_PER_BATCH = 12;
-
-  // CATEGORIES + SHOPS
-  const [categories, setCategories] = React.useState<any[]>([]);
-  const [shops, setShops] = React.useState<any[]>([]);
-
-  const shopLookup = useMemo(() => {
-    return shops.reduce((acc: Record<string, any>, shop: any) => {
-      if (shop.id) acc[String(shop.id)] = shop;
-      return acc;
-    }, {});
-  }, [shops]);
-
-
-  const [currentOrder, setCurrentOrder] = useState<OrderType | null>(null);
-const [quantities, setQuantities] = React.useState<Record<string, number>>({});
-
-  const sortedVisibleItems = React.useMemo(() => {
-    return [...visibleItems].sort((a, b) => {
-      const aBlocked = getCardState(a).blocked ? 1 : 0;
-      const bBlocked = getCardState(b).blocked ? 1 : 0;
-      return aBlocked - bBlocked;
-    });
-  }, [visibleItems, shops, hasLocation, coords?.lat, coords?.lng]);
-
-
+// Move OrderAlertUI outside HomeClient to prevent syntax errors!
 function OrderAlertUI() {
   const router = useRouter();
 
@@ -98,7 +41,7 @@ function OrderAlertUI() {
       <div
         className="
           hidden sm:flex 
-          fixed right-6 bottom-6 z-50
+          fixed left-6 bottom-6 z-50
           bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200
           rounded-2xl shadow-xl
           p-3 w-[320px]
@@ -126,7 +69,7 @@ function OrderAlertUI() {
         </div>
 
         <button
-          onClick={() => router.push("/order_tracking")}
+          onClick={() => router.push("/delivery-tracking")}
           className="
             bg-green-600 text-white hover:bg-green-700 
             px-3 py-1.5 rounded-lg text-sm font-medium
@@ -171,7 +114,7 @@ function OrderAlertUI() {
           <div className="flex items-center gap-2">
    
             <button
-              onClick={() => router.push("/order_tracking")}
+              onClick={() => router.push("/delivery-tracking")}
               className="
                 bg-green-600 text-white hover:bg-green-700 
                 px-3 py-1.5 rounded-lg text-sm font-medium
@@ -190,6 +133,65 @@ function OrderAlertUI() {
     </>
   );
 }
+
+export default function HomeClient() {
+  const router = useRouter();
+  // console.log("UID FROM LS =", localStorage.getItem("uid"));
+
+
+  // LOCATION FROM CONTEXT
+  const { coords, hasLocation, detectAndSetLocation } = useLocationData();   // ⭐ ADDRESS ADDED
+  const userLat = coords?.lat;
+  const userLng = coords?.lng;
+
+  // SNACKBAR
+  const [snack, setSnack] = React.useState("");
+
+  // SCROLL TO RECOMMENDED SECTION
+  const scrollToRecommended = () => {
+    if (typeof window === "undefined") return;
+    const element = document.getElementById('recommended-section');
+    if (element) {
+      const headerHeight = window.innerWidth >= 640 ? 110 : 165; // Desktop: 106px, Mobile: 120px (more generous)
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // LAZY LOADING STATES
+  const [allItems, setAllItems] = React.useState<any[]>([]);
+  const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
+  const [visibleItems, setVisibleItems] = React.useState<any[]>([]);
+  const [batch, setBatch] = React.useState(1);
+  const ITEMS_PER_BATCH = 12;
+
+  // CATEGORIES + SHOPS
+  // const [categories, setCategories] = React.useState<any[]>([]);
+  const [shops, setShops] = React.useState<any[]>([]);
+
+  const shopLookup = useMemo(() => {
+    return shops.reduce((acc: Record<string, any>, shop: any) => {
+      if (shop.id) acc[String(shop.id)] = shop;
+      return acc;
+    }, {});
+  }, [shops]);
+
+
+  const [currentOrder, setCurrentOrder] = useState<OrderType | null>(null);
+const [quantities, setQuantities] = React.useState<Record<string, number>>({});
+
+  const sortedVisibleItems = React.useMemo(() => {
+    return [...visibleItems].sort((a, b) => {
+      const aBlocked = getCardState(a).blocked ? 1 : 0;
+      const bBlocked = getCardState(b).blocked ? 1 : 0;
+      return aBlocked - bBlocked;
+    });
+  }, [visibleItems, shops, hasLocation, coords?.lat, coords?.lng]);
 
   // ------- Load all products (YOUR CODE SAME) -------
   React.useEffect(() => {
@@ -248,26 +250,95 @@ React.useEffect(() => {
   return () => unsub();
 }, []);
 
+  // ------- REVIEWS LOGIC -------
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [newReview, setNewReview] = useState({
+    name: "",
+    rating: 5,
+    text: "",
+    images: [] as string[],
+    video: ""
+  });
+
+  // Fetch Reviews
+  React.useEffect(() => {
+    const q = query(collection(db, "SilkyGoldReviews"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      setReviews(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsub();
+  }, []);
+
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+    return (sum / reviews.length).toFixed(1);
+  }, [reviews]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReview.name || !newReview.text) {
+      setSnack("Please fill in all fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await addDoc(collection(db, "SilkyGoldReviews"), {
+        ...newReview,
+        createdAt: serverTimestamp(),
+      });
+      setNewReview({ name: "", rating: 5, text: "", images: [], video: "" });
+      setShowReviewForm(false);
+      setSnack("Thank you for your review!");
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      setSnack("Failed to submit review");
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSnack(""), 2000);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // In a real app, you would upload to Firebase Storage here.
+    // For this demo, we'll use local object URLs to simulate the preview.
+    const fileArray = Array.from(files);
+    
+    if (type === 'image') {
+      const newImages = fileArray.map(f => URL.createObjectURL(f));
+      setNewReview(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
+    } else {
+      const videoUrl = URL.createObjectURL(fileArray[0]);
+      setNewReview(prev => ({ ...prev, video: videoUrl }));
+    }
+  };
+
 
 
 
   // ------- Load categories (same) -------
-  React.useEffect(() => {
-    async function loadCategories() {
-      const snap = await getDocs(collection(db, "categories"));
-      setCategories(
-        snap.docs.map((d) => {
-          const data = d.data();
-          const image = data.imageSlug 
-            ? `/images/categories/${data.imageSlug}` 
-            : (data.image || "");
-            
-          return { id: d.id, ...data, image };
-        })
-      );
-    }
-    loadCategories();
-  }, []);
+  // React.useEffect(() => {
+  //   async function loadCategories() {
+  //     const snap = await getDocs(collection(db, "categories"));
+  //     setCategories(
+  //       snap.docs.map((d) => {
+  //         const data = d.data();
+  //         const image = data.imageSlug 
+  //           ? `/images/categories/${data.imageSlug}` 
+  //           : (data.image || "");
+  //           
+  //         return { id: d.id, ...data, image };
+  //       })
+  //     );
+  //   }
+  //   loadCategories();
+  // }, []);
 
   // ------- Load shops (same) -------
   React.useEffect(() => {
@@ -288,10 +359,16 @@ React.useEffect(() => {
     loadShops();
   }, []);
 
-  // ------- Always show all items; paging only -------
+  // ------- Only show Silky Gold products -------
   React.useEffect(() => {
-    setFilteredItems(allItems);
-    setVisibleItems(allItems.slice(0, ITEMS_PER_BATCH));
+    const silkyGoldItems = allItems.filter((item: any) => {
+      const title = (item.title || "").toLowerCase();
+      const category = (item.category || "").toLowerCase();
+      const type = (item.type || "").toLowerCase();
+      return title.includes("silky gold") || category.includes("silky gold") || type.includes("silky gold");
+    });
+    setFilteredItems(silkyGoldItems);
+    setVisibleItems(silkyGoldItems.slice(0, ITEMS_PER_BATCH));
     setBatch(1);
   }, [allItems]);
 
@@ -467,13 +544,7 @@ React.useEffect(() => {
   <p className="min-h-[14px] text-[11px] leading-tight -mt-1">
     {isOutOfStock ? (
       <span className="text-red-600 font-medium">Out of stock</span>
-    ) : (
-      isOutOfRange && (
-        <span className="text-red-600 font-medium">
-          This product not available in your area
-        </span>
-      )
-    )}
+    ) : null}
   </p>
           </div>
         </div>
@@ -496,19 +567,19 @@ function getCardState(item: any) {
   let isOutOfStock = false;
   let overlayText = "";
 
-  if (hasUserLocation && shopHasLocation) {
-    const dist = haversineDistanceKm(
-      userLat as number,
-      userLng as number,
-      shop.location.lat,
-      shop.location.lng
-    );
+  // if (hasUserLocation && shopHasLocation) {
+  //   const dist = haversineDistanceKm(
+  //     userLat as number,
+  //     userLng as number,
+  //     shop.location.lat,
+  //     shop.location.lng
+  //   );
 
-    if (dist > 5) {
-      isOutOfRange = true;
-      overlayText = "Delivery is not available in your area";
-    }
-  }
+  //   if (dist > 5) {
+  //     isOutOfRange = true;
+  //     overlayText = "Delivery is not available in your area";
+  //   }
+  // }
 
   if (typeof item.stockQty === "number" && item.stockQty <= 2) {
     isOutOfStock = true;
@@ -520,11 +591,11 @@ function getCardState(item: any) {
   }
 
   const blocked =
-    shopClosed ||
-    !hasShop ||
+    // shopClosed ||
+    // !hasShop ||
     // !hasUserLocation ||  // ❌ ALLOW BROWSING WITHOUT LOCATION
-    !shopHasLocation ||
-    isOutOfRange ||
+    // !shopHasLocation ||
+    // isOutOfRange ||
     isOutOfStock;
 
   return { blocked, overlayText, isOutOfRange, isOutOfStock, shopClosed };
@@ -536,120 +607,551 @@ function getCardState(item: any) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-800 text-foreground w-full pb-16 overflow-x-hidden">
-      {(currentOrder && Object.keys(currentOrder).length > 0) && <OrderAlertUI />}
+      {currentOrder && <OrderAlertUI />}
 
 
       {/* CATEGORY STRIP */}
-      <div className="px-2 sm:px-6 md:px-10 mt-12 sm:mt-6">
-        <div className="relative">
-          <button
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 dark:bg-gray-700 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
-            onClick={() => {
-              const el = document.getElementById("cat-scroll");
-              if (el) el.scrollBy({ left: -150, behavior: "smooth" });
-            }}
-          >
-            <span className="text-black dark:text-white text-xs">←</span>
-          </button>
+      {/* <div className="px-2 sm:px-6 md:px-10 mt-12 sm:mt-6">
+        ...
+      </div> */}
 
-          <button
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gray-200 dark:bg-gray-700 shadow-md rounded-full w-7 h-7 flex items-center justify-center"
-            onClick={() => {
-              const el = document.getElementById("cat-scroll");
-              if (el) el.scrollBy({ left: 150, behavior: "smooth" });
-            }}
-          >
-            <span className="text-black dark:text-white text-xs">→</span>
-          </button>
-
-          <div id="cat-scroll" className="overflow-x-scroll no-scrollbar">
-            <div className="flex gap-6 sm:gap-10 py-2 min-w-max justify-center">
-              {categories.map((cat, i) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    if (!hasLocation) {
-                      detectAndSetLocation();
-                      return;
-                    }
-                    router.push(`/category/${slugify(cat.name)}`);
-                  }}
-                  className="text-center cursor-pointer flex flex-col items-center min-w-[80px] sm:min-w-[90px] md:min-w-[110px]"
+      {/* HERO BANNER */}
+      <div className="w-full -mt-2"> {/* Negative margin to ensure no gap from header */}
+        <div 
+          className="hero-container relative overflow-hidden flex flex-col items-center w-full h-[120vh]"
+          style={{ 
+            backgroundImage: "url('/img/hero-background.png')",
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'top left',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Mobile-specific background - use separate hero-mobile.png */}
+          <style jsx>{`
+            @media (max-width: 768px) {
+              .hero-container {
+                background-image: url('/img/hero-mobile.png') !important;
+                background-size: 100% 100% !important;
+                background-position: top left !important;
+                background-repeat: no-repeat !important;
+              }
+            }
+          `}</style>
+          
+          {/* Left-positioned text with center alignment within itself */}
+          <div className="absolute left-[8%] sm:left-[12%] md:left-[15%] top-[20%] sm:top-1/2 -translate-y-0 sm:-translate-y-1/2 z-10 text-center">
+            <p className="text-[#B59461] font-serif text-xl sm:text-2xl md:text-3xl tracking-[0.3em] mb-2">SILKY GOLD</p>
+            <h1 className="text-[#1D3C2F] font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2">ALOE VERA</h1>
+            <h2 className="text-gray-900 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4">WHITE RICE</h2>
+            
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="h-[1px] bg-[#B59461] w-12 md:w-16"></div>
+              <span className="text-gray-900 font-serif text-xl sm:text-2xl md:text-3xl tracking-[0.2em]">FACE SERUM</span>
+              <div className="h-[1px] bg-[#B59461] w-12 md:w-16"></div>
+            </div>
+            
+            <p className="text-[#1D3C2F] text-base sm:text-lg md:text-xl italic">Glow Naturally, Shine Confidently.</p>
+            
+            {/* Purchase Options */}
+            <div className="mt-6 flex flex-col items-center">
+              <p className="text-[#1D3C2F]/70 text-sm mb-3 font-medium">Also available on</p>
+              
+              <div className="flex flex-row items-center justify-center gap-2 mb-4">
+                <a
+                  href="https://www.flipkart.com/silky-gold-aloe-vera-white-rice-face-serum-vitamin-b5-niacinamide-aloevera-extract-rice-extract/p/itma2e7d081cabac?pid=KMTHNAA2ZJNX5KYA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200"
                 >
-                  <img
-                    src={cat.image}
-                    className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover rounded-lg bg-gray-100"
-                  />
-                  <p className="mt-2 text-xs sm:text-sm font-semibold whitespace-normal text-center text-gray-900 dark:text-gray-100">
-                    {cat.name}
-                  </p>
-                </div>
-              ))}
+                  <img src="/img/flipkart.png" alt="Flipkart" className="w-4 h-4 object-contain" />
+                  <span className="text-gray-800 font-medium text-xs">Flipkart</span>
+                </a>
+                
+                <a
+                  href="https://www.meesho.com/silky-gold-aloe-vera-white-rice-face-serum-vitamin-b5-niacinamide-aloevera-extract-rice-extract/p/f65gy9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200"
+                >
+                  <img src="/img/meesho.avif" alt="Meesho" className="w-4 h-4 object-contain" />
+                  <span className="text-gray-800 font-medium text-xs">Meesho</span>
+                </a>
+                
+                <a
+                  href="https://www.amazon.in/dp/B0H337DH18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200"
+                >
+                  <img src="/img/amazon.jpg" alt="Amazon" className="w-4 h-4 object-contain" />
+                  <span className="text-gray-800 font-medium text-xs">Amazon</span>
+                </a>
+              </div>
+              
+              {/* Buy Now button - Main Website */}
+              <button 
+                onClick={() => router.push("/category/silky-gold-products")}
+                className="px-12 py-3 md:px-16 md:py-4 bg-[#1D3C2F] text-white font-bold rounded-full hover:bg-[#2a5a46] transition-all duration-500 text-lg md:text-2xl shadow-[0_10px_30px_rgba(29,60,47,0.3)] hover:scale-105 active:scale-95 flex items-center justify-center gap-3 group border border-white/10"
+                style={{ backdropFilter: 'blur(10px)' }}
+              >
+                Buy from our website
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-[#B59461] animate-pulse group-hover:rotate-12 transition-transform" />
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* HERO BANNER */}
-      <div className="px-2 sm:px-6 md:px-10 mt-6 sm:mt-10">
-        <div className="relative rounded-xl sm:rounded-2xl overflow-hidden">
+      {/* BENEFITS SECTION */}
+      <div className="w-full bg-[#F9F6F0] py-16 sm:py-24 px-4 sm:px-10 relative overflow-hidden">
+        {/* Decorative Palm Leaves (Optional images if available, otherwise just space) */}
+        <div className="absolute top-0 left-0 w-32 h-32 opacity-20 pointer-events-none -rotate-12">
+          <img src="/img/palm-leaf-left.png" alt="" className="w-full h-full object-contain" />
+        </div>
+        <div className="absolute top-0 right-0 w-32 h-32 opacity-20 pointer-events-none rotate-12">
+          <img src="/img/palm-leaf-right.png" alt="" className="w-full h-full object-contain" />
+        </div>
 
-          <img
-            src="/img/banner2.webp"
-            className="w-full h-[160px] sm:h-[260px] md:h-[320px] lg:h-[430px] object-cover"
-            alt="Banner"
-          />
+        <div className="max-w-7xl mx-auto flex flex-col items-center">
+          {/* Section Heading */}
+          <div className="flex flex-col items-center mb-16 sm:mb-20">
+            <h2 className="text-[#1D3C2F] font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.2em] mb-4">
+              BENEFITS
+            </h2>
+            <div className="flex items-center gap-4 w-64">
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+              <div className="w-2 h-2 rounded-full bg-[#1D3C2F] opacity-60"></div>
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+            </div>
+          </div>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 w-full">
+            {/* Benefit 1 */}
+            <div className="flex flex-col items-center text-center px-4 relative lg:after:content-[''] lg:after:absolute lg:after:right-0 lg:after:top-1/4 lg:after:h-1/2 lg:after:w-[1px] lg:after:bg-[#1D3C2F]/20 last:after:hidden">
+              <div className="w-24 h-24 rounded-full border border-[#1D3C2F]/30 flex items-center justify-center mb-6 bg-white/40 shadow-sm">
+                <Droplets className="w-10 h-10 text-[#1D3C2F] stroke-[1.2]" />
+              </div>
+              <h3 className="text-[#1D3C2F] text-lg sm:text-xl font-bold mb-3">Deep Hydration</h3>
+              <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed max-w-[200px]">
+                Moisturizes deeply and keeps skin soft and smooth.
+              </p>
+            </div>
 
-          <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 text-center text-white w-[90%] sm:w-auto">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-lg">
-              QuickRun Delivery
-            </h1>
+            {/* Benefit 2 */}
+            <div className="flex flex-col items-center text-center px-4 relative lg:after:content-[''] lg:after:absolute lg:after:right-0 lg:after:top-1/4 lg:after:h-1/2 lg:after:w-[1px] lg:after:bg-[#1D3C2F]/20 last:after:hidden">
+              <div className="w-24 h-24 rounded-full border border-[#1D3C2F]/30 flex items-center justify-center mb-6 bg-white/40 shadow-sm">
+                <Sparkles className="w-10 h-10 text-[#1D3C2F] stroke-[1.2]" />
+              </div>
+              <h3 className="text-[#1D3C2F] text-lg sm:text-xl font-bold mb-3">Skin Brightening</h3>
+              <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed max-w-[200px]">
+                Helps brighten skin tone and restore natural glow.
+              </p>
+            </div>
 
-            <p className="mt-1 sm:mt-2 text-sm sm:text-lg md:text-xl font-medium text-green-200 drop-shadow-md">
-              Fresh Food & Groceries delivered{" "}
-              <span className="text-yellow-300 font-bold">in Minutes.</span>
-            </p>
+            {/* Benefit 3 */}
+            <div className="flex flex-col items-center text-center px-4 relative lg:after:content-[''] lg:after:absolute lg:after:right-0 lg:after:top-1/4 lg:after:h-1/2 lg:after:w-[1px] lg:after:bg-[#1D3C2F]/20 last:after:hidden">
+              <div className="w-24 h-24 rounded-full border border-[#1D3C2F]/30 flex items-center justify-center mb-6 bg-white/40 shadow-sm">
+                <Leaf className="w-10 h-10 text-[#1D3C2F] stroke-[1.2]" />
+              </div>
+              <h3 className="text-[#1D3C2F] text-lg sm:text-xl font-bold mb-3">Soothing & Calming</h3>
+              <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed max-w-[200px]">
+                Aloe Vera helps calm irritated and sensitive skin.
+              </p>
+            </div>
 
-            {visibleItems.length > 0 && (() => {
-              const first = visibleItems[0];
-              const { blocked, overlayText } = getCardState(first);
-              const href = `/category/${slugify(first.category || first.type)}/${generateSlug(first.title, first.id)}`;
-
-              if (blocked) {
-                return (
-                  <button
-                    disabled
-                    className="mt-3 sm:mt-5 px-5 sm:px-6 py-2 bg-gray-300 text-gray-700 font-semibold rounded-lg shadow-md cursor-not-allowed"
-                  >
-                    {overlayText || "Select location to order"}
-                  </button>
-                );
-              }
-
-              return (
-                <button 
-                  onClick={scrollToRecommended}
-                  className="mt-3 sm:mt-5 px-5 sm:px-6 py-2 bg-yellow-400 text-black font-semibold rounded-lg hover:bg-yellow-300 transition shadow-md"
-                >
-                  Order Now →
-                </button>
-              );
-            })()}
+            {/* Benefit 4 */}
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-24 h-24 rounded-full border border-[#1D3C2F]/30 flex items-center justify-center mb-6 bg-white/40 shadow-sm">
+                <ShieldCheck className="w-10 h-10 text-[#1D3C2F] stroke-[1.2]" />
+              </div>
+              <h3 className="text-[#1D3C2F] text-lg sm:text-xl font-bold mb-3">Nourishing Care</h3>
+              <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed max-w-[200px]">
+                Nourishes skin and supports a healthy, radiant complexion.
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* SECTION TITLE */}
-      <h2 id="recommended-section" className="text-lg sm:text-xl font-bold mt-10 sm:mt-12 mb-4 px-2 sm:px-6 md:px-10 text-gray-900 dark:text-gray-100">
-        Recommended for you
-      </h2>
+      {/* HOW TO USE SECTION */}
+      <div className="w-full bg-[#F9F6F0] py-16 sm:py-24 px-4 sm:px-10 relative overflow-hidden border-t border-[#1D3C2F]/5">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Heading */}
+          <div className="flex flex-col items-center mb-16 sm:mb-20">
+            <h2 className="text-[#1D3C2F] font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.2em] mb-4 text-center">
+              HOW TO USE
+            </h2>
+            <div className="flex items-center gap-4 w-64">
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+              <div className="w-2 h-2 rounded-full bg-[#1D3C2F] opacity-60"></div>
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+            </div>
+          </div>
 
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
+            {/* Left Column: Usage Steps (2x2 Grid) */}
+            <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 order-2 lg:order-1">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left group">
+                <div className="w-20 h-20 rounded-2xl border border-[#1D3C2F]/20 flex items-center justify-center mb-6 bg-white shadow-sm transition-all duration-300 group-hover:bg-[#1D3C2F] group-hover:text-white">
+                  <Pipette className="w-10 h-10 stroke-[1.2]" />
+                </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-[#1D3C2F] text-white flex items-center justify-center font-bold text-sm">1</div>
+                  <h3 className="text-[#1D3C2F] font-bold text-lg uppercase tracking-wider">Dispense</h3>
+                </div>
+                <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed">
+                  Take 2-3 drops of serum onto your fingertips.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left group">
+                <div className="w-20 h-20 rounded-2xl border border-[#1D3C2F]/20 flex items-center justify-center mb-6 bg-white shadow-sm transition-all duration-300 group-hover:bg-[#1D3C2F] group-hover:text-white">
+                  <User className="w-10 h-10 stroke-[1.2]" />
+                </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-[#1D3C2F] text-white flex items-center justify-center font-bold text-sm">2</div>
+                  <h3 className="text-[#1D3C2F] font-bold text-lg uppercase tracking-wider">Apply</h3>
+                </div>
+                <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed">
+                  Gently apply on clean face & neck using upward motions.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left group">
+                <div className="w-20 h-20 rounded-2xl border border-[#1D3C2F]/20 flex items-center justify-center mb-6 bg-white shadow-sm transition-all duration-300 group-hover:bg-[#1D3C2F] group-hover:text-white">
+                  <Hand className="w-10 h-10 stroke-[1.2]" />
+                </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-[#1D3C2F] text-white flex items-center justify-center font-bold text-sm">3</div>
+                  <h3 className="text-[#1D3C2F] font-bold text-lg uppercase tracking-wider">Massage</h3>
+                </div>
+                <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed">
+                  Massage lightly until the serum is fully absorbed.
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left group">
+                <div className="w-20 h-20 rounded-2xl border border-[#1D3C2F]/20 flex items-center justify-center mb-6 bg-white shadow-sm transition-all duration-300 group-hover:bg-[#1D3C2F] group-hover:text-white">
+                  <SunMoon className="w-10 h-10 stroke-[1.2]" />
+                </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-[#1D3C2F] text-white flex items-center justify-center font-bold text-sm">4</div>
+                  <h3 className="text-[#1D3C2F] font-bold text-lg uppercase tracking-wider">Routine</h3>
+                </div>
+                <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed">
+                  Use morning & night consistently for the best results.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column: Video Demo */}
+            <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end order-1 lg:order-2">
+              <div className="mb-6 flex items-center gap-2">
+                <span className="text-[#1D3C2F] font-serif text-xl sm:text-2xl italic">Watch How It Works ✨</span>
+              </div>
+              
+              <div className="relative w-full max-w-[500px] aspect-[9/16] sm:aspect-video lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(29,60,47,0.15)] border-4 border-white/50 bg-white/30 backdrop-blur-md group transition-all duration-500 hover:scale-[1.02]">
+                <video 
+                  autoPlay 
+                  muted 
+                  loop 
+                  playsInline
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/use.MP4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                
+                {/* Decorative Elements */}
+                <div className="absolute inset-0 border border-white/20 rounded-[2.5rem] pointer-events-none"></div>
+                <div className="absolute top-6 left-6 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold tracking-widest uppercase">
+                  Tutorial
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* GALLERY SECTION */}
+      <div className="w-full bg-white py-16 sm:py-24 px-4 sm:px-10 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col items-center">
+          {/* Section Heading */}
+          <div className="flex flex-col items-center mb-12 sm:mb-16">
+            <h2 className="text-[#1D3C2F] font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.2em] mb-4">
+              GALLERY
+            </h2>
+            <div className="flex items-center gap-4 w-64 mb-6">
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+              <div className="w-2 h-2 rounded-full bg-[#1D3C2F] opacity-60"></div>
+              <div className="h-[1px] bg-[#1D3C2F] flex-1 opacity-30"></div>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 text-center max-w-2xl text-base sm:text-lg leading-relaxed italic">
+              "Witness the essence of pure luxury. Our Silky Gold collection is crafted for those who seek perfection in every drop, bringing the natural glow of health to your skin."
+            </p>
+          </div>
+
+          {/* Main Gallery Image */}
+          <div className="w-full relative group rounded-[2rem] overflow-hidden shadow-2xl border border-gray-100">
+            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500 z-10"></div>
+            <img 
+              src="/img/gallery.jpeg" 
+              alt="Silky Gold Collection Gallery" 
+              className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-105"
+            />
+            {/* Decorative Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 bg-gradient-to-t from-black/60 to-transparent z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <span className="text-white/80 text-xs tracking-[0.4em] uppercase font-bold mb-2 block">Premium Experience</span>
+              <h3 className="text-white text-2xl sm:text-3xl font-serif font-bold">The Gold Standard of Skincare</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* REVIEWS & TESTIMONIALS SECTION */}
+      <div className="w-full bg-[#F9F6F0] py-16 sm:py-24 px-4 sm:px-10 relative overflow-hidden border-t border-[#1D3C2F]/5">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Heading & Stats */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
+            <div className="flex flex-col items-center md:items-start">
+              <h2 className="text-[#1D3C2F] font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.1em] mb-4">
+                Real Glow Stories
+              </h2>
+              <div className="flex items-center gap-2">
+                <div className="flex text-[#B59461]">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={20} fill={i < Math.floor(Number(averageRating)) ? "#B59461" : "none"} className={i < Math.floor(Number(averageRating)) ? "" : "text-gray-300"} />
+                  ))}
+                </div>
+                <span className="text-[#1D3C2F] font-bold text-xl">{averageRating}</span>
+                <span className="text-gray-500 text-sm">({reviews.length} reviews)</span>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setShowReviewForm(true)}
+              className="bg-[#1D3C2F] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#2a5a46] transition-all flex items-center gap-2 shadow-xl shadow-green-900/10 active:scale-95"
+            >
+              <Plus size={20} />
+              Write a Review
+            </button>
+          </div>
+
+          {/* Review Grid */}
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            {reviews.length === 0 ? (
+              <div className="col-span-full py-20 text-center bg-white/50 backdrop-blur-sm rounded-[2rem] border border-dashed border-[#1D3C2F]/20">
+                <MessageSquare className="mx-auto w-12 h-12 text-gray-300 mb-4" />
+                <p className="text-gray-500 italic">No reviews yet. Be the first to share your experience!</p>
+              </div>
+            ) : (
+              reviews.map((review, idx) => (
+                <motion.div 
+                  key={review.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="break-inside-avoid bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] border border-white shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all group"
+                >
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1D3C2F] to-[#2a5a46] flex items-center justify-center text-white font-bold text-lg">
+                        {review.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="text-[#1D3C2F] font-bold">{review.name}</h4>
+                        <div className="flex text-[#B59461]">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={14} fill={i < review.rating ? "#B59461" : "none"} className={i < review.rating ? "" : "text-gray-200"} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <Quote className="text-[#1D3C2F]/10 w-8 h-8 rotate-180" />
+                  </div>
+
+                  <p className="text-[#1D3C2F]/80 text-sm sm:text-base leading-relaxed mb-6 italic">
+                    "{review.text}"
+                  </p>
+
+                  {/* Media Display */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {review.images?.map((img: string, i: number) => (
+                      <div key={i} className="aspect-square rounded-xl overflow-hidden border border-gray-100">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {review.video && (
+                      <div className="aspect-square rounded-xl overflow-hidden border border-gray-100 relative group/vid">
+                        <video src={review.video} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <Video className="text-white w-8 h-8" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">
+                    {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString() : 'Just now'}
+                  </div>
+                </motion.div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* WRITE A REVIEW MODAL */}
+      <AnimatePresence>
+        {showReviewForm && (
+          <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowReviewForm(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20"
+            >
+              <button 
+                onClick={() => setShowReviewForm(false)}
+                className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="p-8 sm:p-12">
+                <h3 className="text-[#1D3C2F] font-serif text-3xl font-bold mb-2">Share Your Glow</h3>
+                <p className="text-gray-500 mb-8">Tell us about your experience with Silky Gold.</p>
+
+                <form onSubmit={handleReviewSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-bold text-[#1D3C2F] uppercase tracking-widest mb-2">Your Name</label>
+                    <input 
+                      type="text" 
+                      value={newReview.name}
+                      onChange={(e) => setNewReview(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#1D3C2F] outline-none transition-all"
+                      placeholder="e.g. Sarah J."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1D3C2F] uppercase tracking-widest mb-2">Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewReview(prev => ({ ...prev, rating: star }))}
+                          className="transition-transform active:scale-90"
+                        >
+                          <Star 
+                            size={32} 
+                            fill={star <= newReview.rating ? "#B59461" : "none"} 
+                            className={star <= newReview.rating ? "text-[#B59461]" : "text-gray-200"} 
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#1D3C2F] uppercase tracking-widest mb-2">Review Content</label>
+                    <textarea 
+                      rows={4}
+                      value={newReview.text}
+                      onChange={(e) => setNewReview(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#1D3C2F] outline-none transition-all resize-none"
+                      placeholder="How does it feel on your skin?"
+                      required
+                    />
+                  </div>
+
+                  {/* File Uploads */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-gray-100 hover:border-[#1D3C2F]/30 bg-gray-50 cursor-pointer transition-all">
+                      <Camera className="text-[#1D3C2F]/40 mb-2" />
+                      <span className="text-[10px] font-bold text-gray-500 uppercase">Add Photos</span>
+                      <input type="file" accept="image/*" multiple onChange={(e) => handleFileChange(e, 'image')} className="hidden" />
+                    </label>
+                    <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-gray-100 hover:border-[#1D3C2F]/30 bg-gray-50 cursor-pointer transition-all">
+                      <Video className="text-[#1D3C2F]/40 mb-2" />
+                      <span className="text-[10px] font-bold text-gray-500 uppercase">Add Video</span>
+                      <input type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'video')} className="hidden" />
+                    </label>
+                  </div>
+
+                  {/* Previews */}
+                  {(newReview.images.length > 0 || newReview.video) && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {newReview.images.map((img, i) => (
+                        <div key={i} className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 relative group">
+                          <img src={img} className="w-full h-full object-cover" />
+                          <button 
+                            type="button"
+                            onClick={() => setNewReview(prev => ({ ...prev, images: prev.images.filter((_, idx) => idx !== i) }))}
+                            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                      {newReview.video && (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 relative group">
+                          <video src={newReview.video} className="w-full h-full object-cover" />
+                          <button 
+                            type="button"
+                            onClick={() => setNewReview(prev => ({ ...prev, video: "" }))}
+                            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <button 
+                    disabled={isSubmitting}
+                    className="w-full bg-[#1D3C2F] text-white py-5 rounded-2xl font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-xl shadow-green-900/10 hover:bg-[#2a5a46] transition-all disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <>
+                        Submit Review
+                        <Send size={18} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* SECTION TITLE */}
+      {/* <h2 id="recommended-section" className="text-lg sm:text-xl font-bold mt-10 sm:mt-12 mb-4 px-2 sm:px-6 md:px-10 text-gray-900 dark:text-gray-100">
+        Silky Gold Products
+      </h2> */}
 
 
       {/* PRODUCT GRID */}
-      <div className="w-full max-w-7xl mx-auto">
+      {/* <div className="w-full max-w-7xl mx-auto">
         <div
           className="
             grid
@@ -710,7 +1212,7 @@ function getCardState(item: any) {
 
 
         </div>
-      </div>
+      </div> */}
 
     </div>
   );

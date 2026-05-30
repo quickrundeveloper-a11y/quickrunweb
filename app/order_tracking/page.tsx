@@ -8,6 +8,8 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { MdMyLocation } from "react-icons/md";
 
@@ -458,9 +460,34 @@ export default function BlinkitOrderTracking() {
         async (snap) => {
           if (!snap.empty) {
             const latest = snap.docs[snap.docs.length - 1];
-            setOrderId(latest.id);
+            const orderId = latest.id;
             const orderData = latest.data();
+            setOrderId(orderId);
             setOrderData(orderData);
+
+            // Check if order is delivered/completed/cancelled and move to OrderHistory
+            const orderStatus = (orderData.status || "").toLowerCase();
+            if (
+              orderStatus === "delivered" ||
+              orderStatus === "completed" ||
+              orderStatus === "cancelled"
+            ) {
+              try {
+                const db = getFirestore();
+                // Add to OrderHistory
+                const historyRef = collection(db, "Customer", userId, "OrderHistory");
+                await addDoc(historyRef, {
+                  id: orderId,
+                  ...orderData,
+                  completedAt: new Date(),
+                });
+
+                // Delete from current_order
+                await deleteDoc(doc(db, "Customer", userId, "current_order", orderId));
+              } catch (error) {
+                console.error("Error moving order to OrderHistory:", error);
+              }
+            }
 
             // Fetch restaurant names for all items
             if (orderData?.items && Array.isArray(orderData.items)) {
@@ -789,8 +816,8 @@ export default function BlinkitOrderTracking() {
           restaurantStopsRef.current = await fetchAllRestaurantStops();
         }
 
-        // If status is grocerry_accepted -> show the user pointer only
-        if (orderData.status === "grocerry_accepted") {
+        // If status is order_placed -> show the user pointer only
+        if (orderData.status === "order_placed") {
           if (orderData?.address?.lat && orderData?.address?.lng) {
             const userLatNum = Number(orderData.address.lat);
             const userLngNum = Number(orderData.address.lng);
@@ -938,7 +965,7 @@ export default function BlinkitOrderTracking() {
             <h1 className="text-xl sm:text-2xl font-bold mt-1 text-gray-900 dark:text-gray-100">Order is confirmed</h1>
 
             {orderId && <p className="text-gray-500 dark:text-gray-400 text-xs mt-1"></p>}
-            {orderData?.status === "grocerry_accepted" ? (
+            {orderData?.status === "order_placed" ? (
               <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
                 We'll assign a delivery partner as soon as your order is packed
               </p>
@@ -1001,7 +1028,7 @@ export default function BlinkitOrderTracking() {
           <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow p-4 sm:p-6">
             <div className="flex items-start gap-3">
               <span className="text-yellow-500 text-2xl sm:text-3xl">🛵</span>
-              {orderData?.status === "grocerry_accepted" ? (
+              {orderData?.status === "order_placed" ? (
                 <p className="font-medium text-gray-800 dark:text-gray-200 text-sm sm:text-base">
                   We'll assign a delivery partner as soon as your order is
                   packed

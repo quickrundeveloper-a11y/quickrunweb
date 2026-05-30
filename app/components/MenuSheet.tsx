@@ -10,6 +10,11 @@ interface MenuSheetProps {
 }
 
 export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
+  const shopItems = [
+    // { label: 'Beauty', href: '/' },
+    // { label: 'Fruits and Vegetables', href: '/category/fruits-and-vegetables' },
+  ];
+
   const aboutUsItems = [
     { label: 'Our Story', href: '/story' },
     { label: 'Blog', href: '/blog' },
@@ -52,8 +57,27 @@ export default function MenuSheet({ isOpen, onClose }: MenuSheetProps) {
         </div>
 
         {/* Menu Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 max-h-[calc(100vh-180px)]">
           
+          {/* Shop Section */}
+          {/* <div>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">
+              Shop
+            </h3>
+            <nav className="space-y-2">
+              {shopItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  onClick={onClose}
+                  className="block w-full text-left p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <span className="font-medium text-base">{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+          </div> */}
+
           {/* About Us Section */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">

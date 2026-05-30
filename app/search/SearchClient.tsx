@@ -130,8 +130,20 @@ export default function SearchClient() {
         foodSnap.forEach((doc) => rawProducts.push(extractData(doc, "food")));
         grocerySnap.forEach((doc) => rawProducts.push(extractData(doc, "grocery")));
 
-        // ⭐ Search Filter
+        // ⭐ Log all categories for debugging
+        console.log("All product categories:", rawProducts.map(p => ({ id: p.id, name: p.name, category: p.category })));
+
+        // ⭐ Allow more flexible category matching (fruits OR vegetables)
+        const isFruitsVeg = (item: any) => {
+          const c = item.category.toLowerCase();
+          const t = item.type.toLowerCase();
+          return c.includes("fruit") || c.includes("vegetable") || t.includes("fruit") || t.includes("vegetable");
+        };
+
+        // ⭐ Search Filter (only fruits and veggies)
         const filtered = rawProducts.filter((item) => {
+          if (!isFruitsVeg(item)) return false;
+          
           const n = item.name.toLowerCase();
           const c = item.category.toLowerCase();
           const t = item.type.toLowerCase();
@@ -146,6 +158,7 @@ export default function SearchClient() {
           );
         });
 
+        console.log("Filtered results:", filtered);
         setResults(filtered);
       } finally {
         setLoading(false);
@@ -298,14 +311,10 @@ export default function SearchClient() {
 
             <p className="min-h-[14px] text-[11px] leading-tight -mt-1">
               {isOutOfStock ? (
-                <span className="text-red-600 font-medium">Out of stock</span>
-              ) : (
-                isOutOfRange && (
-                  <span className="text-red-600 font-medium">
-                    This product not available in your area
-                  </span>
-                )
-              )}
+                <span className="text-red-600 font-medium">
+                  Out of stock
+                </span>
+              ) : null}
             </p>
 
           </div>
@@ -330,19 +339,19 @@ export default function SearchClient() {
     let isOutOfStock = false;
     let overlayText = "";
 
-    if (hasUserLocation && shopHasLocation) {
-      const dist = haversineDistanceKm(
-        userLat as number,
-        userLng as number,
-        shop.location.lat,
-        shop.location.lng
-      );
+    // if (hasUserLocation && shopHasLocation) {
+    //   const dist = haversineDistanceKm(
+    //     userLat as number,
+    //     userLng as number,
+    //     shop.location.lat,
+    //     shop.location.lng
+    //   );
 
-      if (dist > 5) {
-        isOutOfRange = true;
-        overlayText = "Delivery is not available in your area";
-      }
-    }
+    //   if (dist > 5) {
+    //     isOutOfRange = true;
+    //     overlayText = "Delivery is not available in your area";
+    //   }
+    // }
 
     if (typeof item.stockQty === "number" && item.stockQty <= 2) {
       isOutOfStock = true;
@@ -360,11 +369,11 @@ export default function SearchClient() {
     }
 
     const blocked =
-      shopClosed ||
-      !hasShop ||
-      !hasUserLocation ||
-      !shopHasLocation ||
-      isOutOfRange ||
+      // shopClosed ||
+      // !hasShop ||
+      // !hasUserLocation ||
+      // !shopHasLocation ||
+      // isOutOfRange ||
       isOutOfStock;
 
     return { blocked, overlayText, isOutOfRange, isOutOfStock, shopClosed };
@@ -378,19 +387,15 @@ export default function SearchClient() {
     });
   }, [results, shops, hasLocation, userLat, userLng]);
 
-// ------------------------------ NO SELLERS UI ------------------------------
-// ------------------------------ NO SELLERS UI ------------------------------
-if (!loading && results.length === 0 && liveQuery.length > 1 && userLat && userLng) {
-
+// ------------------------------ NO PRODUCT FOUND UI ------------------------------
+if (!loading && results.length === 0 && liveQuery.length > 1) {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-foreground px-4">
-
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white dark:bg-gray-800 text-foreground px-4">
       <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 dark:text-gray-200 text-center">
-        No Results Available in Your Location
+        No Product Found
       </h2>
-
       <p className="mt-2 text-gray-500 text-base sm:text-lg text-center">
-        We’ll expand to your area soon
+        Try searching for fruits and vegetables
       </p>
     </div>
   );

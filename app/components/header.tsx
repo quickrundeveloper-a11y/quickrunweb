@@ -18,7 +18,7 @@ const lexend = Lexend({
 
 import { useState, useEffect } from "react";
 import { openDB } from "idb";
-import { Search, User, ShoppingCart, Menu } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, ShoppingBag, X } from "lucide-react";
 
 import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot } from "firebase/firestore";
 import { app } from "@/lib/firebase"; 
@@ -35,6 +35,7 @@ export default function Header() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFullSearch, setShowFullSearch] = useState(false);
+  const [showSearchBar, setShowSearchBar] = useState(false);
 
 
   // ⭐ FIXED TYPE
@@ -74,9 +75,23 @@ const pathname = usePathname();
   const [openCart, setOpenCart] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [openMenu, setOpenMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
 
   // detectAndSetLocation moved to LocationProvider
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
 
   useEffect(() => {
@@ -234,10 +249,9 @@ useEffect(() => {
   return (
     <>
     {/* TOP DOWNLOAD STRIP */}
-<div className="fixed top-0 left-0 w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center gap-3 h-[26px] text-[11px] sm:text-xs z-[99999]">
+{/* <div className="fixed top-0 left-0 w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center gap-3 h-[26px] text-[11px] sm:text-xs z-[99999]">
   <span className="flex items-center">Download app on Playstore and Appstore</span>
 
-  {/* Playstore */}
   <a
     href="https://play.google.com/store/apps/details?id=com.quick.quick_run"
     target="_blank"
@@ -252,7 +266,6 @@ useEffect(() => {
   </a>
   <span>and</span>
 
-  {/* Appstore */}
   <a
     href="https://apps.apple.com/app/quickrun-instant-delivery/id6755721618
 "
@@ -266,296 +279,125 @@ useEffect(() => {
       className="h-4 w-auto object-contain"
     />
   </a>
-</div>
+</div> */}
 
 
 
-     <header className={`${lexend.className} w-full bg-white dark:bg-gray-800 fixed top-[24px] left-0 z-50 border-b border-gray-200 dark:border-gray-700`}>
-
-
-        <div className="w-full px-3 py-2 flex sm:hidden items-center justify-between">
-
-          {/* LEFT — LOGO + LOCATION */}
-          <div className="flex items-center gap-4 flex-shrink-0">
-<Link href="/" className="relative z-[9999] inline-block pl-4" >
-  <Image
-    src="/logo.png"
-    alt="logo"
-    width={120}
-    height={80}
-    className="h-20 sm:h-28 w-auto object-contain cursor-pointer"
-    priority
-  />
-</Link>
-
-            <div className="h-20 sm:h-28 w-px bg-gray-300 dark:bg-gray-600"></div>
-            <div>
-              <button
-                onClick={() => setShowAddressModal(true)}
-                className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1 hover:text-black dark:hover:text-white whitespace-nowrap"
+     <header 
+        className={`w-full fixed top-0 left-0 z-50 transition-all duration-300 ${
+          isScrolled 
+            ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm py-1" 
+            : "bg-transparent py-2"
+        }`}
+        style={lexend.style}
+      >
+        {/* New Minimalist Header UI */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between relative">
+          {/* Left Section: Menu + Links */}
+          <div className="flex items-center gap-4 sm:gap-8">
+            <button 
+              onClick={() => setOpenMenu(true)} 
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            >
+              <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            </button>
+            {/* <div className="hidden sm:flex items-center gap-6">
+              <Link 
+                href="/" 
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors tracking-wide"
               >
-                {loadingLocation ? "Fetching..." : location} 
-                <span className="text-[10px] sm:text-xs">▼</span>
-              </button>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] sm:max-w-none">
-                {loadingLocation ? "" : fullAddress}
-              </p>
-            </div>
-            {/* SEARCH ICON — MOBILE */}
-            {/* (search button removed as per instructions) */}
+                Beauty
+              </Link>
+              <Link 
+                href="/category/fruits-and-vegetables" 
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors tracking-wide"
+              >
+                Fruits & Vegetables
+              </Link>
+            </div> */}
           </div>
 
-          {/* PROFILE ICON — right */}
-          <div
-            onClick={() => {
-              if (loggedIn) router.push("/profile");
-              else router.push("/login");
-            }}
-            className="h-10 w-10 rounded-full flex items-center justify-center text-lg bg-cover bg-center cursor-pointer ml-auto"
-            style={{
-              backgroundImage: `url("https://api.dicebear.com/9.x/glass/svg?seed=${initial || "A"}")`,
-            }}
-          >
-            {loggedIn ? initial : <User size={18} className="text-gray-700 dark:text-gray-300" />}
+          {/* Center Section: Logo/Text */}
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <Link 
+              href="/" 
+              className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight"
+            >
+              QuickRun
+            </Link>
           </div>
 
-          {showFullSearch && (
-            <div className="w-full flex sm:hidden mt-1 px-2">
-              <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
-<input
-  type="text"
-  placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-  value={searchQuery}
-
-  // 👇 CLICK → open search page immediately
-  onFocus={() => router.push("/search")}
-
-  // 👇 live query broadcast for instant results
-  onChange={(e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    window.dispatchEvent(new CustomEvent("search-update", { detail: value }));
-  }}
-
-  // 👇 Enter → update URL only once
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      router.replace(`/search?q=${searchQuery}`);
-    }
-  }}
-/>
-
-
-
-
-
-
-
-                <button onClick={() => setShowFullSearch(false)}>
-                  <span className="text-gray-600 dark:text-gray-400 ml-3 text-lg">✖</span>
+          {/* Right Section: Search + Cart + Profile */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* {showSearchBar ? (
+              <div className="flex items-center gap-2 flex-1">
+                <input
+                  type="text"
+                  placeholder="Search fruits & vegetables..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSearchQuery(val);
+                    window.dispatchEvent(new CustomEvent("search-update", { detail: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && searchQuery.trim()) {
+                      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                      setShowSearchBar(false);
+                    }
+                  }}
+                  className="flex-1 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none text-sm"
+                  autoFocus
+                />
+                <button 
+                  onClick={() => setShowSearchBar(false)} 
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* DESKTOP SEARCH BAR */}
-          <div className="hidden sm:flex flex-1 mx-8 lg:mx-20">
-            <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
-<input
-  type="text"
-  placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-  value={searchQuery}
-
-  // 👇 CLICK → open search page immediately
-  onFocus={() => router.push("/search")}
-
-  // 👇 live query broadcast for instant results
-  onChange={(e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    window.dispatchEvent(new CustomEvent("search-update", { detail: value }));
-  }}
-
-  // 👇 Enter → update URL only once
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      router.replace(`/search?q=${searchQuery}`);
-    }
-  }}
-/>
-
-
-
-
-
-
-
-              <Search size={20} className="text-gray-600 dark:text-gray-400 ml-3" />
-            </div>
-          </div>
-        </div>
-
-        {/* MOBILE SEARCH BAR BELOW */}
-        <div className="w-full sm:hidden px-3 mt-2">
-          <div className="w-full flex items-center gap-3">
-
-            <div className="flex-1 flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-3">
-<input
-  type="text"
-  placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-  value={searchQuery}
-
-  // 👇 CLICK → open search page immediately
-  onFocus={() => router.push("/search")}
-
-  // 👇 live query broadcast for instant results
-  onChange={(e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    window.dispatchEvent(new CustomEvent("search-update", { detail: value }));
-  }}
-
-  // 👇 Enter → update URL only once
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      router.replace(`/search?q=${searchQuery}`);
-    }
-  }}
-/>
-
-
-
-
-
-
-
-              <Search size={20} className="text-gray-600 dark:text-gray-400 ml-3" />
-            </div>
-
-            {/* Hamburger Menu Button */}
-            <button
-              onClick={() => setOpenMenu(true)}
-              className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 p-3 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
-            >
-              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-            </button>
-
-            <button
-              onClick={() => setOpenCart(true)}
-              className="bg-blue-400 px-4 py-3 rounded-lg flex items-center gap-2 text-white flex-shrink-0"
-            >
-              <ShoppingCart className="h-5 w-5 text-white" />
-              <span className="text-sm">{cartCount} items</span>
-            </button>
-
-          </div>
-        </div>
-
-        {/* DESKTOP HEADER */}
-        <div className="hidden sm:flex w-full items-center justify-between">
-
-          {/* LEFT SIDE — LOGO + LOCATION */}
-          <div className="flex items-center gap-6">
-           <Link href="/" className="relative z-[9999] inline-block pl-4" >
-  <Image
-    src="/logo.png"
-    alt="logo"
-    width={120}
-    height={80}
-    className="h-12 sm:h-20 w-auto object-contain cursor-pointer"
-    priority
-  />
-</Link>
-
-            <div>
-              <button
-                onClick={() => setShowAddressModal(true)}
-                className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1 hover:text-black dark:hover:text-white whitespace-nowrap"
+            ) : (
+              <button 
+                onClick={() => setShowSearchBar(true)} 
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
               >
-                {loadingLocation ? "Fetching..." : location}
-                <span className="text-xs">▼</span>
+                <Search className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </button>
-
-              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[260px]">
-                {loadingLocation ? "" : fullAddress}
-              </p>
-            </div>
-          </div>
-
-          {/* CENTER — SEARCH BAR */}
-          <div className="flex-1 mx-8 lg:mx-20">
-            <div className="w-full flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-4">
-<input
-  type="text"
-  placeholder="Search for groceries, food..."
-  className="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-  value={searchQuery}
-
-  // 👇 CLICK → open search page immediately
-  onFocus={() => router.push("/search")}
-
-  // 👇 live query broadcast for instant results
-  onChange={(e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    window.dispatchEvent(new CustomEvent("search-update", { detail: value }));
-  }}
-
-  // 👇 Enter → update URL only once
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      router.replace(`/search?q=${searchQuery}`);
-    }
-  }}
-/>
-
-
-
-
-
-
-
-              <Search size={22} className="text-gray-600 dark:text-gray-400 ml-3" />
-            </div>
-          </div>
-
-          {/* RIGHT SIDE — MENU, CART, PROFILE */}
-          <div className="flex items-center gap-4">
-            {/* Hamburger Menu Button */}
-            <button
-              onClick={() => setOpenMenu(true)}
-              className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 p-3 rounded-lg flex items-center justify-center transition-colors"
+            )} */}
+            <button 
+              onClick={() => setOpenCart(true)} 
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors relative"
             >
-              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+              <ShoppingBag className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              {cartCount > 0 && (
+                <span className="absolute top-1 right-1 bg-blue-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                  {cartCount}
+                </span>
+              )}
             </button>
-
-            <div
-              onClick={() => setOpenCart(true)}
-              className="bg-blue-400 px-3 py-2 rounded-lg flex items-center gap-2 text-white cursor-pointer"
-            >
-              <ShoppingCart className="h-5 w-5 text-white" />
-              <div className="flex flex-col leading-tight">
-                <span className="text-base">{cartCount} items</span>
-              </div>
-            </div>
-            {/* PROFILE ICON */}
             <div
               onClick={() => {
                 if (loggedIn) router.push("/profile");
                 else router.push("/login");
               }}
-              className="h-10 w-10 rounded-full flex items-center justify-center text-lg bg-cover bg-center cursor-pointer"
+              className="h-8 w-8 rounded-full flex items-center justify-center text-xs bg-cover bg-center cursor-pointer border border-gray-200 dark:border-gray-600"
               style={{
                 backgroundImage: `url("https://api.dicebear.com/9.x/glass/svg?seed=${initial || "A"}")`,
               }}
             >
-              {loggedIn ? initial : <User size={18} className="text-gray-700 dark:text-gray-300" />}
+              {!loggedIn && <User size={16} className="text-gray-700 dark:text-gray-300" />}
+              {loggedIn && initial && <span className="sr-only">{initial}</span>}
             </div>
           </div>
         </div>
+
+        {/* OLD HEADER UI (COMMENTED OUT) */}
+        {/* 
+        <div className="w-full px-3 py-2 flex sm:hidden items-center justify-between">
+          ... existing mobile code ...
+        </div>
+        ... and so on ...
+        */}
       </header>
 
       {/* ADDRESS MODAL */}

@@ -87,7 +87,7 @@ export default function PaymentSuccessInner() {
         const newOrderRef = collection(db, "Customer", userId, "current_order");
         await addDoc(newOrderRef, {
           userId: userId, // VALUE UPDATED: uses userId
-          status: "grocerry_accepted",
+          status: "order_placed",
           addressId: savedAddress?.id ?? null,
           address: savedAddress ?? {},
           paymentMethod: { brand: "ONLINE", label: "Online Payment" },
@@ -99,7 +99,7 @@ export default function PaymentSuccessInner() {
         // Clear cart
         for (const d of snap.docs) await deleteDoc(d.ref);
 
-        router.push("/order_tracking");
+        router.push("/order-confirmed");
       } catch (error) {
         console.error("Sandbox error:", error);
         alert("Something went wrong! Please try again.");

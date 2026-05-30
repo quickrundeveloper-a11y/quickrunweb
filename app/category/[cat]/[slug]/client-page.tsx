@@ -203,7 +203,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
     ? "Delivery is not available in your area"
     : "";
 
-  const interactionBlocked = Boolean(overlayMessage);
+  const interactionBlocked = false;
 
   if (notFound) {
     return (
@@ -293,7 +293,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
 
         {/* RIGHT DETAILS */}
         <div>
-          {interactionBlocked && (
+          {/* {interactionBlocked && (
             <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 px-4 py-3">
               {overlayMessage === "Shop Closed" ? (
                 <span className="inline-flex items-center gap-2">
@@ -304,7 +304,7 @@ export default function ProductPage({ breadcrumbItems }: ClientPageProps) {
                 overlayMessage
               )}
             </div>
-          )}
+          )} */}
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100">
             {product.name || product.keyInformation?.name || "Product"}
           </h1>

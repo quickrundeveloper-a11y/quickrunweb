@@ -286,13 +286,7 @@ const tokens = tokenNorm(categoryName)
                 <span className="text-red-600 font-medium">
                   Out of stock
                 </span>
-              ) : (
-                isOutOfRange && (
-                  <span className="text-red-600 font-medium">
-                    This product not available in your area
-                  </span>
-                )
-              )}
+              ) : null}
             </p>
           </div>
         </div>
@@ -374,19 +368,19 @@ const tokens = tokenNorm(categoryName)
     let isOutOfStock = false;
     let overlayText = "";
 
-    if (hasUserLocation && shopHasLocation) {
-      const dist = haversineDistanceKm(
-        userLat as number,
-        userLng as number,
-        shop.location.lat,
-        shop.location.lng
-      );
+    // if (hasUserLocation && shopHasLocation) {
+    //   const dist = haversineDistanceKm(
+    //     userLat as number,
+    //     userLng as number,
+    //     shop.location.lat,
+    //     shop.location.lng
+    //   );
 
-      if (dist > 5) {
-        isOutOfRange = true;
-        overlayText = "Delivery is not available in your area";
-      }
-    }
+    //   if (dist > 5) {
+    //     isOutOfRange = true;
+    //     overlayText = "Delivery is not available in your area";
+    //   }
+    // }
 
     if (typeof item.stockQty === "number" && item.stockQty <= 2) {
       isOutOfStock = true;
@@ -404,11 +398,11 @@ const tokens = tokenNorm(categoryName)
     }
 
     const blocked =
-      shopClosed ||
-      !hasShop ||
-      !hasUserLocation ||
-      !shopHasLocation ||
-      isOutOfRange ||
+      // shopClosed ||
+      // !hasShop ||
+      // !hasUserLocation ||
+      // !shopHasLocation ||
+      // isOutOfRange ||
       isOutOfStock;
 
     return { blocked, overlayText, isOutOfRange, isOutOfStock, shopClosed };

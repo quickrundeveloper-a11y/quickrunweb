@@ -77,6 +77,10 @@ export default function Cart({ onClose }: { onClose?: () => void }) {
 
   const [openAddAddress, setOpenAddAddress] = useState(false);
 
+  useEffect(() => {
+    console.log("cart.tsx: openAddAddress changed to", openAddAddress);
+  }, [openAddAddress]);
+
   //location match logic
   const [deliverable, setDeliverable] = useState(true);
   const [deliverabilityReason, setDeliverabilityReason] = useState<string>("");
@@ -223,64 +227,10 @@ const hasAddressLocation = Boolean(addressLat && addressLng);
 
   // Allow cart interactions even without location; only warn at order time if address missing.
   useEffect(() => {
-    if (cartItems.length === 0) {
-      setDeliverable(true);
-      setDeliverabilityReason("");
-      return;
-    }
-  
-    if (!selectedAddress) {
-      setDeliverable(false);
-      setDeliverabilityReason("Select delivery address");
-      return;
-    }
-  
-    if (!selectedAddress.lat || !selectedAddress.lng) {
-      setDeliverable(false);
-      setDeliverabilityReason("Address location not available");
-      return;
-    }
-  
-    for (const item of cartItems) {
-      const shop = item.restaurentId
-        ? shopLookup[String(item.restaurentId)]
-        : null;
-  
-      if (!shop) {
-        setDeliverable(false);
-        setDeliverabilityReason("Shop unavailable");
-        return;
-      }
-  
-      if (shop.activeShop === false) {
-        setDeliverable(false);
-        setDeliverabilityReason("Shop Closed");
-        return;
-      }
-  
-      if (!shop.location?.lat || !shop.location?.lng) {
-        setDeliverable(false);
-        setDeliverabilityReason("Shop location unavailable");
-        return;
-      }
-  
-      const dist = haversineDistanceKm(
-        selectedAddress.lat,
-        selectedAddress.lng,
-        shop.location.lat,
-        shop.location.lng
-      );
-  
-      if (dist > 5) {
-        setDeliverable(false);
-        setDeliverabilityReason("Delivery is not available in your area");
-        return;
-      }
-    }
-  
+    // Always set deliverable to true, ignore location checks!
     setDeliverable(true);
     setDeliverabilityReason("");
-  }, [cartItems, shopLookup, selectedAddress]);
+  }, []);
   
 
 
@@ -338,7 +288,7 @@ const hasAddressLocation = Boolean(addressLat && addressLng);
       const orderData = {
         // 12. USED userId instead of user.uid
         userId: userId,
-        status: "grocerry_accepted",
+        status: "order_placed",
         addressId: selectedAddress.id,
         address: selectedAddress,
         items: cartItems,
@@ -357,122 +307,138 @@ if (paymentMethod === "COD") {
 
   await clearCart(userId);
 
-  // ⭐⭐ FIX START
-  if (onClose) onClose();        // close the cart sheet instantly
-  setProcessingOrder(false);     // remove “processing” state
-  router.push("/order_tracking"); // redirect properly
-  return;                         // IMPORTANT
-  // ⭐⭐ FIX END
+  if (onClose) onClose();
+  setProcessingOrder(false);
+  router.push("/order-confirmed");
+  return;
 }
  else {
-        // --- ONLINE FLOW (Razorpay) ---
-        const response = await fetch("/api/razorpay/create-order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: userId,
-            amount: grandTotal,
-            currency: "INR",
-            address: selectedAddress,
-            items: cartItems,
-          }),
-        });
-
-        // #region agent log
-        fetch("http://127.0.0.1:7242/ingest/72c66c78-8d52-4cdc-a1b7-9b0c44f4ba07", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId: "debug-session",
-            runId: "run1",
-            hypothesisId: "H5",
-            location: "app/components/cart.tsx:createOrderResponse",
-            message: "create-order response",
-            data: { status: response.status },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
-
-        const res = await response.json();
-        if (!response.ok || !res.success) {
-          throw new Error(res.message || "Failed to create Razorpay order");
-        }
-
-        const sdkReady = await loadRazorpayScript();
-        if (!sdkReady || !(window as any).Razorpay) {
-          throw new Error("Failed to load Razorpay SDK");
-        }
-
-        const rzp = new (window as any).Razorpay({
-          key: res.key,
-          amount: res.amount,
-          currency: res.currency || "INR",
-          name: "QuickRun",
-          description: "Order payment",
-          order_id: res.orderId,
-          prefill: {
-            name: selectedAddress.name,
-            contact: selectedAddress.phone,
-          },
-          notes: {
-            userId,
-            addressId: selectedAddress.id,
-          },
-          handler: async (paymentResponse: any) => {
-            try {
-              const verifyRes = await fetch("/api/razorpay/verify-payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...paymentResponse,
-                  orderId: res.orderId,
-                  amount: grandTotal,
-                  userId,
-                  address: selectedAddress,
-                  items: cartItems,
-                }),
-              });
-
-              const verifyJson = await verifyRes.json();
-              if (!verifyRes.ok || !verifyJson.success) {
-                throw new Error(verifyJson.message || "Payment verification failed");
-              }
-
-              const newOrderRef = collection(db, "Customer", userId, "current_order");
-
-              await addDoc(newOrderRef, {
-                ...orderData,
-                paymentMethod: { brand: "Razorpay", label: "Razorpay" },
-                paymentStatus: "Paid",
-                razorpay: paymentResponse,
-              });
-
-              await clearCart(userId);
-              if (onClose) onClose();
-              setProcessingOrder(false);
-              router.push("/order_tracking");
-            } catch (err: any) {
-              console.error("Verification error:", err);
-              alert(err.message || "Payment verification failed");
-              setProcessingOrder(false);
-            }
-          },
-          modal: {
-            ondismiss: () => setProcessingOrder(false),
-          },
-          theme: {
-            color: "#0aad0a",
-          },
-        });
-
-        rzp.on("payment.failed", (err: any) => {
-          console.error("Payment failed:", err?.error);
-          alert(err?.error?.description || "Payment failed. Please try another method.");
+        // --- ONLINE FLOW: Skip Razorpay on localhost for testing ---
+        const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        
+        if (isLocalhost) {
+          // Testing mode: skip payment and directly place order
+          const newOrderRef = collection(db, "Customer", userId, "current_order");
+          await addDoc(newOrderRef, {
+            ...orderData,
+            paymentMethod: { brand: "Razorpay", label: "Razorpay (Testing)" },
+            paymentStatus: "Paid",
+          });
+          
+          await clearCart(userId);
+          if (onClose) onClose();
           setProcessingOrder(false);
-        });
+          router.push("/order-confirmed");
+        } else {
+          // --- ONLINE FLOW (Razorpay) ---
+          const response = await fetch("/api/razorpay/create-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: userId,
+              amount: grandTotal,
+              currency: "INR",
+              address: selectedAddress,
+              items: cartItems,
+            }),
+          });
 
-        rzp.open();
+          // #region agent log
+          fetch("http://127.0.0.1:7242/ingest/72c66c78-8d52-4cdc-a1b7-9b0c44f4ba07", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sessionId: "debug-session",
+              runId: "run1",
+              hypothesisId: "H5",
+              location: "app/components/cart.tsx:createOrderResponse",
+              message: "create-order response",
+              data: { status: response.status },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {});
+          // #endregion
+
+          const res = await response.json();
+          if (!response.ok || !res.success) {
+            throw new Error(res.message || "Failed to create Razorpay order");
+          }
+
+          const sdkReady = await loadRazorpayScript();
+          if (!sdkReady || !(window as any).Razorpay) {
+            throw new Error("Failed to load Razorpay SDK");
+          }
+
+          const rzp = new (window as any).Razorpay({
+            key: res.key,
+            amount: res.amount,
+            currency: res.currency || "INR",
+            name: "QuickRun",
+            description: "Order payment",
+            order_id: res.orderId,
+            prefill: {
+              name: selectedAddress.name,
+              contact: selectedAddress.phone,
+            },
+            notes: {
+              userId,
+              addressId: selectedAddress.id,
+            },
+            handler: async (paymentResponse: any) => {
+              try {
+                const verifyRes = await fetch("/api/razorpay/verify-payment", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    ...paymentResponse,
+                    orderId: res.orderId,
+                    amount: grandTotal,
+                    userId,
+                    address: selectedAddress,
+                    items: cartItems,
+                  }),
+                });
+
+                const verifyJson = await verifyRes.json();
+                if (!verifyRes.ok || !verifyJson.success) {
+                  throw new Error(verifyJson.message || "Payment verification failed");
+                }
+
+                const newOrderRef = collection(db, "Customer", userId, "current_order");
+
+                await addDoc(newOrderRef, {
+                  ...orderData,
+                  paymentMethod: { brand: "Razorpay", label: "Razorpay" },
+                  paymentStatus: "Paid",
+                  razorpay: paymentResponse,
+                });
+
+                await clearCart(userId);
+                if (onClose) onClose();
+                setProcessingOrder(false);
+                router.push("/order-confirmed");
+              } catch (err: any) {
+                console.error("Verification error:", err);
+                alert(err.message || "Payment verification failed");
+                setProcessingOrder(false);
+              }
+            },
+            modal: {
+              ondismiss: () => setProcessingOrder(false),
+            },
+            theme: {
+              color: "#0aad0a",
+            },
+          });
+
+          rzp.on("payment.failed", (err: any) => {
+            console.error("Payment failed:", err?.error);
+            alert(err?.error?.description || "Payment failed. Please try another method.");
+            setProcessingOrder(false);
+          });
+
+          rzp.open();
+        }
       }
     } catch (error: any) {
       console.error("Order processing error:", error);
@@ -527,11 +493,11 @@ if (paymentMethod === "COD") {
             </button>
           </div>
 
-          {(!deliverable || !selectedAddress) && (
+          {/* {(!deliverable || !selectedAddress) && (
   <div className="...">
     {deliverabilityReason || "Select delivery address"}
   </div>
-)}
+)} */}
 
 
           <div className="flex flex-col gap-4 items-stretch">
@@ -698,7 +664,10 @@ if (paymentMethod === "COD") {
               )}
 <div className="flex justify-end">
   <button
-    onClick={() => setOpenAddAddress(true)}
+    onClick={() => {
+      console.log("+ Add Address button clicked! Setting openAddAddress to true");
+      setOpenAddAddress(true);
+    }}
     className="text-sm font-semibold text-green-700 dark:text-green-400 px-3 py-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
   >
     + Add Address
@@ -740,7 +709,7 @@ if (paymentMethod === "COD") {
                     />
                   </label>
 
-                  <label
+                  {/* <label
                     className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
                       paymentMethod === "COD"
                         ? "border-green-600 bg-green-50 dark:bg-green-900/20 ring-1 ring-green-600"
@@ -767,7 +736,7 @@ if (paymentMethod === "COD") {
                       onChange={() => setPaymentMethod("COD")}
                       className="h-5 w-5 accent-green-600"
                     />
-                  </label>
+                  </label> */}
                 </div>
               </div>
 
@@ -805,11 +774,11 @@ if (paymentMethod === "COD") {
               {/* Sticky/Fixed Pay Button (Mobile & Desktop) */}
               <div className="fixed bottom-0 right-0 w-full max-w-md bg-white dark:bg-gray-800 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border-t border-gray-200 dark:border-gray-700 z-[100004]">
 
-{(!deliverable || !hasLocation) && (
+{/* {(!deliverable || !hasLocation) && (
   <p className="text-red-600 dark:text-red-400 text-sm font-semibold mb-2">
     {deliverabilityReason || "Select location to order"}
   </p>
-)}
+)} */}
 
 <button
   onClick={handlePlaceOrder}
@@ -817,12 +786,12 @@ if (paymentMethod === "COD") {
     processingOrder ||
     cartItems.length === 0 ||
     checkingDelivery ||
-    !deliverable ||
+    // !deliverable ||
     !selectedAddress
   }
   
   className={`group relative flex w-full items-center justify-between rounded-xl px-6 py-4 text-white transition-transform active:scale-[0.98] 
-    ${!deliverable || !hasLocation ? "bg-gray-400" : "bg-green-700"} 
+    bg-green-700 
     disabled:opacity-70 disabled:active:scale-100`}
 >
   <div className="flex flex-col items-start">
@@ -840,7 +809,7 @@ if (paymentMethod === "COD") {
       </>
     ) : (
       <>
-        <span>{deliverable ? "Place Order" : "Undeliverable"}</span>
+        <span>Place Order</span>
         <ChevronRight className="h-5 w-5" />
       </>
     )}
@@ -853,16 +822,21 @@ if (paymentMethod === "COD") {
         </div>
       </div>
       {openAddAddress && (
-  <AddAddressPanel
-    onClose={async () => {
-      setOpenAddAddress(false);
-      if (userId) {
-        await fetchData(userId); // Refresh addresses
-        setShowAddressList(true); // Open list after adding new
-      }
-    }}
-  />
-)}
+        (() => {
+          console.log("cart.tsx: Rendering AddAddressPanel!");
+          return (
+            <AddAddressPanel
+              onClose={async () => {
+                setOpenAddAddress(false);
+                if (userId) {
+                  await fetchData(userId); // Refresh addresses
+                  setShowAddressList(true); // Open list after adding new
+                }
+              }}
+            />
+          );
+        })()
+      )}
 
     </>
   );

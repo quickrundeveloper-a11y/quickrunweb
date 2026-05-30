@@ -4,10 +4,17 @@ import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Header from "./components/header";
 import Footer from "./components/footer";
+import WhatsAppButton from "./components/WhatsAppButton";
+import PromoPopup from "./components/PromoPopup";
 
-export default function ClientLayout({ children }: { children: ReactNode }) {
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const hideHeaderFooter = pathname === "/login" || pathname === "/franchise-details";
+  const isHomePage = pathname === "/";
 
   return (
     <>
@@ -16,14 +23,17 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         className={
           hideHeaderFooter
             ? "bg-white dark:bg-gray-800 text-foreground min-h-screen"
-            : // Extra top padding so content never hides behind the fixed header + download strip,
-              // tuned for mobile first and slightly smaller on larger screens.
+            : isHomePage
+            ? "bg-white dark:bg-gray-800 text-foreground min-h-screen"
+            : // Extra top padding for other pages
               "pt-[150px] sm:pt-32 lg:pt-28 bg-white dark:bg-gray-800 text-foreground min-h-screen"
         }
       >
         {children}
       </main>
       {!hideHeaderFooter && <Footer />}
+      <WhatsAppButton />
+      {isHomePage && <PromoPopup />}
     </>
   );
 }

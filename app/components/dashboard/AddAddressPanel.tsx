@@ -6,6 +6,8 @@ import { db } from "@/lib/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 export default function AddAddressPanel({ onClose }: any) {
+  console.log("AddAddressPanel mounted!");
+  
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -29,11 +31,17 @@ export default function AddAddressPanel({ onClose }: any) {
   const autocompleteServiceRef = useRef<any>(null);
   const geocoderRef = useRef<any>(null);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  console.log("AddAddressPanel open state initial:", open);
 
 useEffect(() => {
-  setTimeout(() => setOpen(true), 10); // slide-in delay
+  console.log("AddAddressPanel useEffect: setting open to true");
+  setOpen(true);
 }, []);
+
+useEffect(() => {
+  console.log("AddAddressPanel open state changed to:", open);
+}, [open]);
 
 
   // --------------------------
@@ -84,7 +92,9 @@ useEffect(() => {
   const handleClose = () => {
   setOpen(false);           // slide-out
   setTimeout(() => {
-    onClose();              // actual close after animation
+    if (onClose) {
+      onClose();              // actual close after animation
+    }
   }, 300);
 };
 
@@ -212,6 +222,12 @@ useEffect(() => {
 
     if (!uid) return;
 
+    // ⭐ Validate required fields
+    if (!form.name || !form.phone || !form.address) {
+      alert("Please fill in Full Name, Phone Number, and Full Address!");
+      return;
+    }
+
     await addDoc(
       collection(db, "Customer", uid, "addresses"),
       {
@@ -221,7 +237,7 @@ useEffect(() => {
       }
     );
 
-    onClose();
+    handleClose();
   };
 
   // --------------------------
@@ -235,7 +251,7 @@ useEffect(() => {
       />
 
       <div
-  className={`fixed inset-0 flex justify-end z-[10010] transition-opacity duration-300 
+  className={`fixed inset-0 flex justify-end z-[100010] transition-opacity duration-300 
   ${open ? "bg-black/30 opacity-100" : "bg-black/0 opacity-0"}`}
 >
 
@@ -325,10 +341,7 @@ useEffect(() => {
 
           {/* SAVE */}
 <button
-  onClick={async () => {
-    await save();
-    handleClose();
-  }}
+  onClick={save}
   className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-lg font-medium"
 >
   Save Address
