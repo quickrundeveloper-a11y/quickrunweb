@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,9 +11,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-if (!firebaseConfig.apiKey) {
-  console.error("Firebase config is missing! Please check your .env.local file.");
-}
+console.log("🔧 Firebase Config:", {
+  projectId: firebaseConfig.projectId,
+  storageBucket: firebaseConfig.storageBucket,
+});
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const storage = getStorage(app);
+console.log("✅ Firebase initialized with Storage bucket:", firebaseConfig.storageBucket);
