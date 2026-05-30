@@ -9,3 +9,6 @@ app/api/server/server-key.json
 
 .vercel
 .env*.local
+
+.vercel
+.env*.local
